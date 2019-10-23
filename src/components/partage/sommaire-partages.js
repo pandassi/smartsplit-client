@@ -1,5 +1,3 @@
-// Résumé du partage - US 64
-
 import React, { Component } from 'react'
 import { toast } from 'react-toastify'
 import axios from 'axios'
@@ -10,23 +8,22 @@ import 'react-confirm-alert/src/react-confirm-alert.css'
 import { Auth } from 'aws-amplify'
 
 import Login from '../auth/Login'
-import { confirmAlert } from 'react-confirm-alert'
 
 import Entete from '../entete/entete'
 import { Accordion, Icon } from 'semantic-ui-react'
 import SommairePartage from './partage-sommaire'
-import AssistantPartageEditeur from './assistant-partage-editeur'
-import PartageSommaireEditeur from './partage-sommaire-editeur'
 
 import PageAssistantSplitCourrielsCollaborateurs from '../split/assistant-split-courriel-collaborateurs'
 
-import { Modal } from 'semantic-ui-react'
+import { Modal, Button } from 'semantic-ui-react'
 
 import moment from 'moment'
+import SommairePartagesEditeur from './sommaire-partages-editeur'
 
 const PANNEAU_EDITEUR = 1, PANNEAU_PROPOSITIONS = 0
 
 const TYPE_SPLIT = ['workCopyrightSplit', 'performanceNeighboringRightSplit', 'masterNeighboringRightSplit']
+
 
 export default class SommairePartages extends Component {
 
@@ -128,7 +125,6 @@ export default class SommairePartages extends Component {
                 </Translation>
             )
 
-            let _id0
             let _p0
 
             // Trouver _p0, la proposition la plus récente
@@ -173,7 +169,6 @@ export default class SommairePartages extends Component {
             if (this.state.propositions.length > 0) {
                 let _p = this.state.propositions[this.state.propositions.length - 1]
                 _p0 = _p
-                _id0 = _p.uuid
                 if (_p.etat !== 'REFUSE' || this.state.propositions.length === 0) {
                     nouveauDisabled = true
                 }
@@ -333,29 +328,69 @@ export default class SommairePartages extends Component {
                                                         }} className={`ui medium button sommaire`}
 
                                                             style={{
-                                                                width: "200px",
+                                                                width: "90%",
                                                                 position: "relative",
-                                                                marginTop: "50px",
-                                                                marginTop: "150px"
+                                                                marginTop: "150px",
+                                                                right: "50px"
                                                             }}>
 
                                                             {t('flot.split.documente-ton-oeuvre.proposition.envoyer')}
                                                         </div>
-
-                                                        <Modal
-                                                            open={this.state.modaleCourriels}
-                                                            onClose={this.closeModal}
-                                                            size="small"
-                                                        >
-                                                            <PageAssistantSplitCourrielsCollaborateurs
-                                                                ayantDroits={rightHolders}
-                                                                propositionId={this.state.propositions[this.state.propositions.length - 1].uuid}
-                                                                close={(cb) => { this.closeModal(); if (cb) cb() }}
-                                                            />
-
-                                                        </Modal>
+                                                        <div style={{
+                                                            fontFamily: "IBM Plex Sans",
+                                                            fontSize: "16px",
+                                                            marginLeft: "10px"
+                                                        }}>
+                                                            <Modal
+                                                                open={this.state.modaleCourriels}
+                                                                onClose={this.closeModal}
+                                                                size="small"
+                                                                closeIcon
+                                                            >
+                                                                <Modal.Header>
+                                                                    <h2 style={{ display: "flex" }}>{t("flot.split.documente-ton-oeuvre.proposition.titre")}
+                                                                        <div 
+                                                                            className="close-icon"
+                                                                            onClick={() => { this.closeModal() }} >
+                                                                        </div>
+                                                                    </h2>
+                                                                </Modal.Header>
+                                                                <Modal.Content style={{ color: "#687A8B" }}>
+                                                                    {t("flot.split.documente-ton-oeuvre.proposition.sous-titre")}
+                                                                    <PageAssistantSplitCourrielsCollaborateurs
+                                                                        onRef={m=>this.setState({courrielsCollaborateurs: m})}
+                                                                        ayantDroits={rightHolders}
+                                                                        propositionId={this.state.propositions[this.state.propositions.length - 1].uuid}
+                                                                        close={(cb) => { this.closeModal(); if (cb) cb() }}
+                                                                    />
+                                                                </Modal.Content>
+                                                                <Modal.Actions>
+                                                                    <div style={{ display: "flex", float: "right", marginBottom: "15px" }}>
+                                                                        <Button
+                                                                            onClick={this.closeModal}
+                                                                            style={{
+                                                                                background: "white",
+                                                                                color: "#2DA84F",
+                                                                            }}>
+                                                                            {t("flot.split.collaborateur.attribut.bouton.annuler")}
+                                                                        </Button>
+                                                                        <Button
+                                                                            onClick={()=>{
+                                                                                this.state.courrielsCollaborateurs.handleSubmit()
+                                                                                this.closeModal()
+                                                                            }}
+                                                                            className={`ui medium button envoie`}
+                                                                            style={{
+                                                                                height: "40px"
+                                                                            }}
+                                                                        >
+                                                                            {t("flot.split.documente-ton-oeuvre.proposition.envoyer")}
+                                                                        </Button>
+                                                                    </div>
+                                                                </Modal.Actions>
+                                                            </Modal>
+                                                        </div>
                                                     </div>
-
                                                 )
                                             }
                                         </div>
@@ -389,19 +424,8 @@ export default class SommairePartages extends Component {
                                     {
                                         this.state.panneau === PANNEAU_EDITEUR &&
                                         (
-                                            <div className="ui row">
-                                                <div className="ui one wide column" />
-                                                {
-                                                    !this.state.partEditeur &&
-                                                    <AssistantPartageEditeur propositionId={_id0} sansentete className="ui twelve wide column" />
-                                                }
-                                                {
-                                                    this.state.partEditeur &&
-                                                    <PartageSommaireEditeur ayantDroit={this.state.ayantDroit} part={this.state.partEditeur} proposition={_p0} />
-                                                }
-                                                <div className="ui one wide column" />
-                                            </div>
-                                        )
+                                            <SommairePartagesEditeur proposition={_p0} />                        
+                                        )                                    
                                     }
                                     {
                                         this.state.proposition && this.state.proposition.etat === "VOTATION" && !this.state.jetonApi && (

@@ -2,17 +2,11 @@ import React, { Component } from 'react'
 import { toast } from 'react-toastify'
 import axios from 'axios'
 import Beignet from '../visualisation/partage/beignet'
-import Histogramme from '../visualisation/partage/histogramme'
 import { Translation } from 'react-i18next'
 
 import { Auth } from 'aws-amplify'
 
-import { confirmAlert } from 'react-confirm-alert'
-import 'react-confirm-alert/src/react-confirm-alert.css'
-
-import avatar_espece from '../../assets/images/elliot.jpg'
 import LogIn from '../auth/Login'
-import { truncate } from 'fs';
 import { Modal } from 'semantic-ui-react'
 
 export default class PartageSommaireEditeur extends Component {
@@ -20,6 +14,7 @@ export default class PartageSommaireEditeur extends Component {
     constructor(props){
         super(props)    
         this.state = {
+            idx: props.idx,
             part: props.part,
             proposition: props.proposition,
             utilisateur: props.ayantDroit,
@@ -30,11 +25,12 @@ export default class PartageSommaireEditeur extends Component {
         this.boutonAccepter = this.boutonAccepter.bind(this)
         this.boutonRefuser = this.boutonRefuser.bind(this)
         this.changerVote = this.changerVote.bind(this)
+        this.estVoteFinal = this.estVoteFinal.bind(this)
     }
 
     componentWillReceiveProps(nextProps) {
         if(this.props.part !== nextProps.part) {
-            this.setState({part: nextProps.parts})
+            this.setState({part: nextProps.part})
         } 
         if(this.props.proposition !== nextProps.proposition) {
             this.setState({proposition: nextProps.proposition})
@@ -49,7 +45,7 @@ export default class PartageSommaireEditeur extends Component {
 
     componentWillMount() {
         this.rafraichirDonnees(()=>{
-            if(!this.estVoteFinal() && this.estVoteClos() || this.state.rafraichirAuto) {
+            if(!this.estVoteFinal() && (this.estVoteClos() || this.state.rafraichirAuto)) {
                 this.setState({rafraichir: true}, ()=>{
                     this.rafraichissementAutomatique()                
                 })
@@ -114,74 +110,12 @@ export default class PartageSommaireEditeur extends Component {
                                     donnees.push({ayantDroit: this.state.ayantsDroit[elem], color: _rH[elem].color, nom: _rH[elem].nom, pourcent: parseFloat(_rH[elem].pourcent)})
                                 }            
                             })
-                                
                             this.setState({donnees: donnees})
                         })
                     }
                 })
             })
-        })
-/* 
-        // Récupérer l'ayant-droit
-        axios.get(`http://api.smartsplit.org:8080/v1/rightholders/${this.state.part.rightHolderId}`)
-        .then(res=>{
-            this.setState({donateur: res.data.Item})
-        })
-
-        // Récupérer l'éditeur
-        axios.get(`http://api.smartsplit.org:8080/v1/rightholders/${this.state.part.shareeId}`)
-        .then(res=>{
-            this.setState({beneficiaire: res.data.Item}, ()=>{
-                // Créer une structure pour les données du beignet avec tous les collaborateurs du partage
-                let _rH = {}
-                let donnees = []
-                let parts = this.state.proposition.rightsSplits.workCopyrightSplit                
-                // Paroles
-                parts.lyrics.forEach((elem, idx)=>{
-                    if(!_rH[elem.rightHolder.rightHolderId]) {
-                        _rH[elem.rightHolder.rightHolderId] = {nom: undefined, pourcent: 0}
-                    }            
-                    _rH[elem.rightHolder.rightHolderId].nom = elem.rightHolder.name
-                    _rH[elem.rightHolder.rightHolderId].color = elem.rightHolder.color
-                    _rH[elem.rightHolder.rightHolderId].pourcent = parseFloat(_rH[elem.rightHolder.rightHolderId].pourcent) + parseFloat(elem.splitPct)
-                })
-
-                // Musique
-                parts.music.forEach((elem, idx)=>{
-                    if(!_rH[elem.rightHolder.rightHolderId]) {
-                        _rH[elem.rightHolder.rightHolderId] = {nom: undefined, pourcent: 0}
-                    }            
-                    _rH[elem.rightHolder.rightHolderId].nom = elem.rightHolder.name
-                    _rH[elem.rightHolder.rightHolderId].color = elem.rightHolder.color
-                    _rH[elem.rightHolder.rightHolderId].pourcent = parseFloat(_rH[elem.rightHolder.rightHolderId].pourcent) + parseFloat(elem.splitPct)
-                })
-
-                // Calcul des données pour le beignet par ayant-droit
-                Object.keys(_rH).forEach((elem)=>{
-                    if(elem === this.state.part.rightHolderId) {
-                        // c'est l'utlisateur connecté, on lui assigne 100 % du partage avec l'éditeur
-                        let _aD = {}
-                        _aD.pourcent = 100
-                        _aD.color = _rH[elem].color
-                        _aD.nom = _rH[elem].nom
-                        this.setState({ayantDroit: _aD})
-                        this.setState({partPrincipale: _rH[elem].pourcent})
-                        // on pousse l'utilisateur ET l'éditeur
-                        donnees.push({color: _rH[elem].color, nom: _rH[elem].nom, pourcent: parseFloat(_rH[elem].pourcent * this.state.part.rightHolderPct / 100)})
-                        donnees.push({
-                            color: "#bacada", 
-                            nom: this.state.beneficiaire.artistName ? this.state.beneficiaire.artistName : `${this.state.beneficiaire.firstName} ${this.state.beneficiaire.lastName}`,
-                            pourcent: parseFloat(this.state.part.shareePct * _rH[elem].pourcent / 100)})
-                    } else {
-                        // on pousse l'ayant-droit
-                        donnees.push({color: _rH[elem].color, nom: _rH[elem].nom, pourcent: parseFloat(_rH[elem].pourcent)})
-                    }            
-                })
-                    
-                this.setState({donnees: donnees})
-            })
-        }) */
-        
+        })        
     }  
 
     activerBoutonVote() {
@@ -313,7 +247,7 @@ export default class PartageSommaireEditeur extends Component {
         
         if(this.state.beneficiaire && this.state.donateur) {
 
-            let visualisation = (<Beignet type="workCopyrightSplit" uuid="auteur--beignet" data={this.state.donnees} />)
+            let visualisation = (<Beignet type="workCopyrightSplit" uuid={`auteur--beignet__${this.state.idx}`} data={this.state.donnees} />)
 
             return (
                 <div className="ui segment">
@@ -326,7 +260,7 @@ export default class PartageSommaireEditeur extends Component {
                                     <div className="ui row">
                                         <div className="ui two wide column">
                                             <div className="holder-name">
-                                                <img className="ui spaced avatar image" src={`https://smartsplit-images.s3.us-east-2.amazonaws.com/${this.state.beneficiaire.avatarImage}`} />
+                                                <img alt="" className="ui spaced avatar image" src={`https://smartsplit-images.s3.us-east-2.amazonaws.com/${this.state.beneficiaire.avatarImage}`} />
                                             </div>
                                         </div>
                                         <div className="ui ten wide column">
@@ -405,7 +339,7 @@ export default class PartageSommaireEditeur extends Component {
                                     <div className="ui row">
                                         <div className="ui two wide column">
                                             <div className="holder-name">
-                                                <img className="ui spaced avatar image" src={`https://smartsplit-images.s3.us-east-2.amazonaws.com/${this.state.donateur.avatarImage}`} />
+                                                <img alt="" className="ui spaced avatar image" src={`https://smartsplit-images.s3.us-east-2.amazonaws.com/${this.state.donateur.avatarImage}`} />
                                             </div>
                                         </div>
                                         <div className="ui ten wide column">

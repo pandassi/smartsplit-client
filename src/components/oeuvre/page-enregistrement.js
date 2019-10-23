@@ -17,7 +17,7 @@ import {
   updateRole
 } from "../page-assistant/right-holder-helpers";
 import * as roles from "../../assets/listes/role-uuids.json";
-import {SauvegardeAutomatiqueMedia} from "./SauvegardeAutomatique";
+import { SauvegardeAutomatiqueMedia } from "./SauvegardeAutomatique";
 
 export default class PageEnregistrement extends React.Component {
   constructor(props) {
@@ -265,10 +265,9 @@ export default class PageEnregistrement extends React.Component {
                   "flot.split.documente-ton-oeuvre.documenter.codeiswc-placeholder"
                 )}
                 value={this.props.values.isrc}
-                placeholder={"XX-XXX-00-0000"}
                 onChange={value => this.props.setFieldValue("isrc", value)}
               />
-
+              {/*{elem.info && (<InfoBulle text={elem.info} />)}*/}
               <div className="section-divider"></div>
 
               <h3 className="section-title">

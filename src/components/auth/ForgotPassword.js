@@ -1,18 +1,13 @@
-import React, { Component } from "react";
-// import FormErrors from "../FormErrors";
-// import Validate from "../utility/FormValidation";
-import { Auth } from "aws-amplify";
-import { Translation } from "react-i18next";
-import { Modal } from "semantic-ui-react";
+import React, { Component } from "react"
+import { Auth } from "aws-amplify"
+import { Translation } from "react-i18next"
+import { Modal } from "semantic-ui-react"
 
-import closeIcon from "../../assets/svg/icons/x.svg";
-import "../../assets/scss/page-assistant/modal.scss";
-import positiveImage from "../../assets/images/positive.png";
-import { toast } from "react-toastify";
-import { Formik, Form, Field } from "formik";
-import * as Yup from 'yup';
-
-//import { withTranslation } from "react-i18next";
+import closeIcon from "../../assets/svg/icons/x.svg"
+import "../../assets/scss/page-assistant/modal.scss"
+import positiveImage from "../../assets/images/positive.png"
+import { toast } from "react-toastify"
+import { Formik, Field } from "formik"
 
 const emailStyle = {
   display: "block",
@@ -39,17 +34,11 @@ class ForgotPassword extends Component {
     };
     this.validateEmail = this.validateEmail.bind(this);
   }
-  /*validateEmail(value) {
-      if (!value) {
-        return "Required";
-      } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,6}$/i.test(value)) {
-        return "Invalid Email";
-      }
-    }*/
+ 
   validateEmail(value) {
     let error;
     if (!value) {
-      error = ( /*Translation = dans JSX*/
+      error = ( 
         <Translation>
           {
             t =>
@@ -90,21 +79,22 @@ class ForgotPassword extends Component {
     });
   };
 
-  forgotPasswordHandler = async event => {
-    event.preventDefault();
-
-    // AWS Cognito integration here
-    try {
-      await Auth.forgotPassword(this.state.email);
-    } catch (error) {
+  forgotPasswordHandler = (courriel) => {
+    // AWS Cognito integration here    
+    console.log(courriel)
+    Auth.forgotPassword(courriel)
+    .then(res=>{
+      console.log(res)
+    })
+    .catch(error=>{
       toast.error(error.message)
       console.log(error)
-    }
+    })    
   };
 
   onInputChange = event => {
     this.setState({
-      [event.target.id]: event.target.value
+      email: event.target.value
     });
     document.getElementById(event.target.id).classList.remove("is-danger");
   };
@@ -119,7 +109,7 @@ class ForgotPassword extends Component {
   };
 
   handleSubmit = values => {
-    const email = values.email;
+    this.forgotPasswordHandler(values.email)
   }
 
   render() {
@@ -167,7 +157,7 @@ class ForgotPassword extends Component {
                     >
                       {t("flot.split.auth.oublier.titre")}
                     </h1>
-                    <p>{t("flot.split.auth.oublier.preambule")}</p>
+                    <p style={{ marginLeft: "0px" }}>{t("flot.split.auth.oublier.preambule")}</p>
                     {/* <form onSubmit={this.forgotPasswordHandler}>
                     <div
                       className="field"
@@ -210,7 +200,7 @@ class ForgotPassword extends Component {
                       style={{
                         position: "relative",
                         float: "right",
-                        margin: "0px 35px 10px 0px"
+                        margin: "0px 123px 10px 0px"
                       }}
                       onClick={props.handleSubmit}
                     >
@@ -222,16 +212,26 @@ class ForgotPassword extends Component {
                         onClose={this.handleClose}
                         size="small"
                       >
-                        <Modal.Content>
-                          <div className="modal-navbar">
-                            <div className="left">
-                              <div className="title">{t("flot.fin.recupMotDePasse")}</div>
+                        <Modal.Header>
+                          <span style={{ display: "flex" }}>
+                            <div className="title">
+                              {t("flot.fin.recupMotDePasse")}
                             </div>
+                            <div className="close-icon"
+                              onClick={() => { this.handleClose() }}
+                              style={{
+                                right: "40px",
+                                position: "absolute"
+                              }}
+                            >
+                              <img src={closeIcon} alt={"close"} />
+                            </div>
+                          </span>
+                        </Modal.Header>
 
+                        <Modal.Content>
+                          <div className="left">
                             <div className="right">
-                              <a className="close-icon" onClick={() => { this.handleClose() }}>
-                                <img src={closeIcon} alt={"close"} />
-                              </a>
                             </div>
                           </div>
 
@@ -265,7 +265,7 @@ class ForgotPassword extends Component {
                   </div>
                 </div>
               )}
-            </Translation>
+            </ Translation>
           )
         }
       >

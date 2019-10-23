@@ -23,15 +23,10 @@ import { Navbar } from '../navigation/navbar';
 
 import { Auth } from 'aws-amplify';
 
-import Login from '../auth/Login';
 import ModalFin from "./modal-fin";
-import { confirmAlert } from 'react-confirm-alert';
 import ModaleConnexion from '../auth/Connexion';
-import { ConsoleLogger } from '@aws-amplify/core';
-
 
 // Modèle
-
 
 class AssistantOeuvre extends Component {
     pageProgressPercentages = [10, 20, 30, 40, 50, 70, 80, 100];
@@ -154,7 +149,8 @@ class AssistantOeuvre extends Component {
 
             let lyrics = _m.lyrics
 
-            lyrics.text = lyrics.text.trim()
+            if(lyrics && lyrics.text)
+                lyrics.text = lyrics.text.trim()
 
             valeurs = {
                 mediaId: this.state.mediaId,
@@ -204,16 +200,16 @@ class AssistantOeuvre extends Component {
     onSubmit = (values, actions, t) => {
         this.setState({
             endModalOpen: true
-        });
-
+        })
         axios.post('http://api.smartsplit.org:8080/v1/media', values)
-            .then((response) => {
-                actions.setSubmitting(false);                
-            })
-            .catch((error) => {
-                console.log(error)
-            });
-    };
+        .then((response) => {
+            actions.setSubmitting(false)
+            window.location.href="/"
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+    }
 
     render() {
         if (this.state.user) {
@@ -295,6 +291,7 @@ class AssistantOeuvre extends Component {
                                             </Wizard.Page>
                                         </Wizard>
                                         <ModalFin
+                                            songTitle={this.state.title}
                                             titre={ this.state.title }
                                             open={ this.state.endModalOpen }
                                             onClose={ () => this.setState({ endModalOpen: false }) }

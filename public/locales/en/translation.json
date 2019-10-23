@@ -24,15 +24,19 @@
     "apercu-sen-vient": "Your preview is shown here"
   },
   "collaborateur": {
-    "titre": "Add a collaborating artist",
+    "titre": "[Add/Modify] a collaborator",
     "titre2": "Add as a collaborator:",
     "attribut": {
+      "placeholder": {
+        "prenom": "Legal first name",
+        "nom": "Legal last name"
+      },
       "etiquette": {
-        "nom": "Legal Name",
-        "prenom": "Legal First Name",
+        "nom": "My name",
+        "prenom": "My first name",
         "artiste": "Artist name (aka)",
-        "option": " Optional",
-        "na": "If not applicable, the complete name will be displayed.",
+        "option": "Optional",
+        "na": "For example, Jay-Z is the artist name of Shawn Corey Carter.",
         "role": "Role(s) by default",
         "courriel": "Email",
         "groupe": "Add groups, artistic enteties or compagnies",
@@ -173,8 +177,9 @@
         "password": "Forgot Password",
         "password2": "Password Verification",
         "password3": "Change Verification",
-        "definir": "Set new password",
-        "nouveau": "New password",
+        "definir": "Set and confirm your new password",
+        "nouveau": "My new password",
+        "confirmer": "Confirm your new password",
         "code": "Please enter the verification code sent to your email address below, your email address and a new password.",
         "verification": "Enter verification code",
         "welcome": "Welcome",
@@ -244,7 +249,8 @@
           "bouton": {
             "annuler": "Cancel",
             "sauvegarder": "Save",
-            "soumettre": "Submit"
+            "soumettre": "Submit",
+            "parti": "Let's go!"
           }
         },
         "declaration": {
@@ -324,14 +330,14 @@
           "editeur-placeholder": "Add an editor",
           "codeiswc": "ISWC Code",
           "codeiswc-description": "The International Standard Work Code is a unique identifying code for music work.",
-          "codeiswc-placeholder": "Add a code",
+          "codeiswc-placeholder": "T-012345678-1",
           "titre2": "Who played the musical piece on this sound recording?",
           "titre2-description": "Here you mention who played which instrument.",
           "titre2-placeholder": "Add an Interpreter",
           "options": {
             "question1": "Which type of performance?",
             "question1-choix-a": "Main Artist",
-            "question1-choix-b": "Featuring Artist",
+            "question1-choix-b": "Backup Artist",
             "question2": "Which role in the musical piece?",
             "question2-choix-a": "Singer",
             "question2-choix-b": "Musician"
@@ -488,9 +494,11 @@
         "editeur": {
           "ajout": "Add an editor",
           "editeur": "Editor",
-          "donateur": "Donor"
+          "donateur": "Creator"
         },
         "proposition": {
+          "titre": "Send the copyright split",
+          "sous-titre": "To finalize this split, you have to invite your collaborators to validate it all. Indicate their email addresses to which you are sending your split proposition.",
           "nouvelle": "New musical work",
           "envoyer": "Send to collaborators",
           "continuer": "Continue to split the rights",
@@ -534,9 +542,9 @@
         },
         "oublier": {
           "titre": "Forgot your password?",
-          "preambule": "Please enter the email address associated with your account and we'll email you a password reset link.",
+          "preambule": "Enter the email address associated with your account to receive a code and reset your password.",
           "indication": {
-            "email": "Enter email",
+            "email": "Your email",
             "password": "Forgot password"
           }
         }
@@ -561,8 +569,8 @@
         }
       },
       "roles": {
-        "principal": "Principal",
-        "accompaniment": "Accompaniment",
+        "principal": "Featured Artist",
+        "accompaniment": "Backup Artist",
         "producer": "Producer",
         "director": "Director",
         "studio": "Studio",
@@ -636,6 +644,8 @@
         "password-invalide": "Invalid password",
         "correspond": "The passwords do not match",
         "password": "Password",
+        "confirm-password": "Confirm your password",
+        "choose-password": "Choose your password",
         "ou": "or",
         "bouton": "Create my account",
         "courriel-confirm": "Confirm your email",
@@ -644,7 +654,8 @@
     },
     "fin": {
       "created": "Created documentation",
-      "maintenant": "is now documented!",
+      "maintenant1": "The title ",
+      "maintenant2": "is now documented. Congrats!",
       "maintenantPartage": "The split proposition now exists. Bravo!",
       "resume": "See the summary",
       "partage": "See the proposal",
@@ -655,8 +666,8 @@
   "accueil": {
     "titre": "Login to your Smartsplit account.",
     "sous-titre": "Enter your information below.",
-    "courriel": "Enter email",
-    "motdepasse": "My password",
+    "courriel": "Enter your email",
+    "motdepasse": "Enter your password",
     "oublie": "Forgot password?"
   },
   "entete": {

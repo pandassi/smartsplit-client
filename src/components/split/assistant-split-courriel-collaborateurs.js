@@ -1,39 +1,34 @@
 /**
  * Saisie du collaborateur principal de l'oeuvre
  */
-
-import React, { Component, Fragment } from "react";
-import { Translation } from "react-i18next";
-
-import { Input, Label } from "semantic-ui-react";
-
-import axios from "axios";
-import { toast } from "react-toastify";
+import React, { Component } from "react"
+import { Translation } from "react-i18next"
+import { Input, Label } from "semantic-ui-react"
+import axios from "axios"
 
 const divEmail = {
   position: "relative",
   display: "block",
-  margin: "0 50px 0 30px",
-  background: "transparent"
+  margin: "0 20px 0 10px"
 };
 
 class PageAssistantSplitCourrielsCollaborateurs extends Component {
   constructor(props) {
-    super(props);
+    super(props)
+    props.onRef(this)
     this.state = {
       open: false,
       ayantDroits: props.ayantDroits,
       propositionId: props.propositionId
-    };
-    this._courrielsModifies = [];
-    this.onChange = this.onChange.bind(this);
+    }
+    this._courrielsModifies = []
+    this.onChange = this.onChange.bind(this)
   }
 
   componentWillMount() {
     let _aDs = this.state.ayantDroits;
     let cpt = 0,
-      taille = Object.keys(this.props.ayantDroits).length,
-      aTous = false;
+      taille = Object.keys(this.props.ayantDroits).length
     Object.keys(this.props.ayantDroits).forEach(rhId => {
       axios
         .get(`http://api.smartsplit.org:8080/v1/rightholders/${rhId}`)
@@ -56,15 +51,6 @@ class PageAssistantSplitCourrielsCollaborateurs extends Component {
           }
         });
     });
-  }
-
-  click() {
-    this.handleSubmit();
-    this.close();
-  }
-
-  close() {
-    this.props.close();
   }
 
   handleSubmit() {
@@ -105,7 +91,16 @@ class PageAssistantSplitCourrielsCollaborateurs extends Component {
     this._courrielsModifies[e.target.id] = e.target.value;
   }
 
+  handleOpen = () => {
+    this.setState({ open: true })
+  }
+
+  handleClose = () => {
+    this.setState({ open: false })
+  }
+
   render() {
+
     // Construction de la liste à afficher
     let ayantDroits = [];
     Object.keys(this.state.ayantDroits).forEach(elem => {
@@ -113,7 +108,12 @@ class PageAssistantSplitCourrielsCollaborateurs extends Component {
 
       ayantDroits.push(
         <div key={`champ--courriel__${elem}`}>
-          <Label style={divEmail} htmlFor={`champ--courriel__${elem}`}>
+          <Label htmlFor={`champ--courriel__${elem}`}
+            style={{
+              fontSize: "16px",
+              background: "transparent",
+              margin: "10px 0px 0px 0px"
+            }}>
             {_aD.name}
           </Label>
           <Translation>
@@ -134,25 +134,11 @@ class PageAssistantSplitCourrielsCollaborateurs extends Component {
         </div>
       );
     });
-
+    //Séparation conteneur - contenu
     return (
-      <Translation>
-        {t => (
-          <div>
-            {ayantDroits}
-            <br></br>
-            <div
-              onClick={() => {
-                this.click();
-              }}
-              className={`ui medium button envoie`}
-              style={{ position: "relative", left: "365px" }}
-            >
-              {t("flot.split.documente-ton-oeuvre.proposition.envoyer")}
-            </div>
-          </div>
-        )}
-      </Translation>
+      <div>
+        {ayantDroits}
+      </div>
     );
   }
 }

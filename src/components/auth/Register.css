@@ -6,7 +6,7 @@
   height: 24px;
   font-family: "IBM Plex Sans";
   font-weight: bold;
-  font-size: 16.5px;
+  font-size: 16px;
   line-height: 24px;
 }
 
@@ -14,7 +14,7 @@
   display: block;
   margin: 0 auto;
   width: 464px;
-  font-family: "IBM Plex Sans";
+  font-family: "IBM Plex Sans"
 }
 
 /*button[id="facebook"],
@@ -26,7 +26,6 @@
     font-family: 'IBM Plex Sans';
     font-weight: bold;
     color: white;
-    font-size: 15px;
     line-height: 24px;
     text-align: center;
     cursor: pointer;
@@ -59,7 +58,6 @@ button[id="google"] {
 
 input {
   /* styles génériques */
-  height: 40px;
   color: #8da0b3;
   border: 1px solid #dcdfe1;
   border-radius: 2px;
@@ -77,7 +75,6 @@ label[for="confirmpassword"] {
   font-family: "IBM Plex Sans";
   height: 24px;
   font-style: normal;
-  font-size: 15px;
   font-weight: bold;
   line-height: 24px;
 }
@@ -114,7 +111,7 @@ input[id="password"] {
 }
 
 input[id="confirmpassword"] {
-  margin-top: 35px;
+  margin-top: 20px;
   margin-bottom: 30px;
 }
 
@@ -159,7 +156,7 @@ button[id="hide"] {
 }
 
 button[id="hide-confirm"] {
-  margin: 42px 16px 0 0;
+  margin: 30px 16px 0 0;
 }
 
 /*hr[class="hrLogin"] {
@@ -322,12 +319,10 @@ header#registerHeader h1 {
 header#registerHeader h3 {
   /*content: "Tu es à un clic de pouvoir documenter ta musique et de partager \A tes droits avec tes collabos.";*/
   white-space: pre;
-  font-size: normal;
   font-weight: 400;
-  font-size: 20px;
+  font-size: 16px;
   line-height: 18px;
   color: #687a8b;
-  font-size: 16px;
   line-height: 24px;
   height: 24px;
   margin-bottom: 50px;
@@ -364,12 +359,17 @@ header#registerHeader h3 {
   max-width: 500px !important;
   display: flex;
   flex-flow: wrap;
-  height: auto;
+  height: 30px;
 }
 
 .sous-titre {
-  font-size: 14px;
+  font-size: 12px;
   color: grey;
+}
+
+label {
+  font-size: 16px;
+  font-weight: bold;
 }
 
 .firstName.register::placeholder,
@@ -377,11 +377,12 @@ header#registerHeader h3 {
 ::placeholder {
   color: #8da0b2;
   opacity: 1;
-  font-size: 16.5px;
+  font-size: 16px;
 }
 
 input[placeholder] {
   line-height: 30px;
+  font-size: 16px;
 }
 
 .dropdown-container {

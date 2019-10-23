@@ -4,16 +4,7 @@ import { Field, Form, Formik } from "formik";
 import zxcvbn from "zxcvbn";
 import { Auth } from "aws-amplify";
 import { toast } from "react-toastify";
-import {
-  Button,
-  Header,
-  Image,
-  Modal,
-  Checkbox,
-  Dropdown,
-  Input,
-  Label
-} from "semantic-ui-react";
+import { Dropdown } from "semantic-ui-react";
 import axios from "axios";
 // import * as Yup from 'yup'
 // Traduction
@@ -36,7 +27,6 @@ class Register extends Component {
 
   constructor(props) {
     super(props);
-    const { minStrength = 3, thresholdLength = 8 } = props;
 
     this.state = {
       hidden: true,
@@ -56,7 +46,9 @@ class Register extends Component {
       currentValue: [],
       currentRoleValue: [],
       image: "",
-      uploadURL: ""
+      uploadURL: "",
+      locale: navigator.language || navigator.userLanguage,
+      gender: "registeredUser"  // Cognito Default Attribute Gender used as flag for user creation
     };
 
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
@@ -140,6 +132,8 @@ class Register extends Component {
     const defaultRoles = this.state.currentRoleValue;
     const instruments = this.state.instruments;
     const groups = this.state.currentValue;
+    const locale = this.state.locale;
+    const gender = this.state.gender;
 
     try {
 
@@ -163,6 +157,8 @@ class Register extends Component {
           email: email,
           given_name: firstName,
           family_name: lastName,
+          locale: locale,
+          gender: gender,
           "custom:artistName": artistName,
           "custom:instruments": JSON.stringify(instruments),
           "custom:defaultRoles": JSON.stringify(defaultRoles),
@@ -178,7 +174,6 @@ class Register extends Component {
           this.props.history.push("/welcome")
         )
         .catch(err => {
-          // toast.error(err.message)
           console.log(err);
         })
         .finally(() => {
@@ -261,21 +256,11 @@ class Register extends Component {
   }
 
   render() {
-    const {
-      type,
-      validator,
-      onStateChanged,
-      children,
-      ...restProps
-    } = this.props;
 
-    const { password, strength, currentValue, currentRoleValue } = this.state;
+    console.log("LOCALE: ", this.state.locale)
 
-    const { firstName, lastName, username } = this.state;
-
+    const { password, strength, currentValue } = this.state;
     const passwordLength = password.length;
-    const passwordStrong = strength >= this.minStrength;
-    const passwordLong = passwordLength > this.thresholdLength;
 
     const strengthClass = [
       "strength-meter mt-2",
@@ -329,8 +314,8 @@ class Register extends Component {
                           <div>
                             <div className="registerHead">
                               <h1>
-                                On your way to <br />
-                                Professionalization.
+                                Create for free your <br />
+                                profile on Smart Split.
                               </h1>
                               <br />
                               <br />
@@ -348,9 +333,9 @@ class Register extends Component {
                           <div>
                             <div className="lregisterHeade">
                               <h1>
-                                En route vers la
+                                Crée gratuitement
                                 <br />
-                                professionalisation.
+                                ton profil sur Smartsplit.
                               </h1>
                               <br />
                               <br />
@@ -377,7 +362,7 @@ class Register extends Component {
                             }}
                           >
                             <div style={{ width: "220px" }}>
-                              <label style={{ fontWeight: "bold" }}>
+                              <label>
                                 {t("flot.split.collaborateur.attribut.etiquette.prenom")}
                               </label>
                               <br />
@@ -385,7 +370,7 @@ class Register extends Component {
                                 type="text"
                                 className="firstName register"
                                 placeholder={t(
-                                  "flot.split.collaborateur.attribut.etiquette.prenom"
+                                  "flot.split.collaborateur.attribut.placeholder.prenom"
                                 )}
                                 value={this.state.firstName}
                                 onChange={e =>
@@ -394,7 +379,7 @@ class Register extends Component {
                               />
                             </div>
                             <div style={{ width: "220px", marginLeft: "25px" }}>
-                              <label style={{ fontWeight: "bold" }}>
+                              <label>
                                 {t("flot.split.collaborateur.attribut.etiquette.nom")}
                               </label>
                               <br />
@@ -402,7 +387,7 @@ class Register extends Component {
                                 type="text"
                                 className="lastName register"
                                 placeholder={t(
-                                  "flot.split.collaborateur.attribut.etiquette.nom"
+                                  "flot.split.collaborateur.attribut.placeholder.nom"
                                 )}
                                 value={this.state.lastName}
                                 onChange={e =>
@@ -414,10 +399,10 @@ class Register extends Component {
 
                           <div className="ui row" style={{ marginTop: "30px" }}>
                             <span>
-                              <label style={{ fontWeight: "bold" }}>
+                              <label>
                                 {t("flot.split.collaborateur.attribut.etiquette.artiste")}
                               </label>
-                              <label style={{ color: "grey", float: "right" }}>
+                              <label style={{ color: "grey", float: "right", fontWeight: "normal" }}>
                                 {t("flot.split.collaborateur.attribut.etiquette.option")}
                               </label>
                             </span>
@@ -435,7 +420,17 @@ class Register extends Component {
                               }
                             />
                             <div className="sous-titre">
-                              {t("flot.split.collaborateur.attribut.etiquette.na")}
+
+
+                              {i18n.lng && i18n.lng.substring(0, 2) === "en" && (
+                                <p style={{ margin: "0px" }}>For example, <em>Jay-Z</em> is the artist name of <em>Shawn Corey Carter</em>.</p>
+                              )}
+                              <div className="sous-titre">
+                                {i18n.lng && i18n.lng.substring(0, 2) !== "en" && (
+                                  <p style={{ margin: "0px" }}>Par exemple, <em>Jay-Z</em> est le nom d'artiste de <em>Shawn Corey Carter</em>.</p>
+                                )}
+
+                              </div>
                             </div>
                           </div>
 
@@ -445,7 +440,7 @@ class Register extends Component {
                                 className="ui row"
                                 style={{ marginTop: "30px" }}
                               >
-                                <label style={{ fontWeight: "bold" }}>
+                                <label>
                                   {t("flot.split.collaborateur.attribut.etiquette.groupe")}
                                 </label>
                                 <br /><br />
@@ -583,7 +578,7 @@ class Register extends Component {
                                 <div style={{
                                   color: "red",
                                   position: "absolute",
-                                  top: "655px"
+                                  top: "660px"
                                 }}>
                                   {t("flot.split.inscription.email-invalide")}{" "}
                                 </div>
@@ -622,6 +617,7 @@ class Register extends Component {
                               )}
                             </div>
                           </div>
+
                           <span>
                             <div className="field">
                               <div className="control has-icons-left"
@@ -688,6 +684,7 @@ class Register extends Component {
                           </div>
                           <div className={confirmClass}>
                             <div className="control has-icons-left confirmPassword">
+                              <i className="fas fa-lock" />
                               <div className="input-wrapper">
                                 <Field
                                   onPaste={e => {
@@ -702,7 +699,6 @@ class Register extends Component {
                                       ? "password"
                                       : "text"
                                   }
-
                                   id="confirmpassword"
                                   name="confirmpassword"
                                   placeholder={t("flot.split.inscription.password-confirm")}
@@ -779,7 +775,7 @@ class Register extends Component {
                                         }
                                       }}
                                     >
-                                      {t("entete.inscription")}
+                                      {t("flot.split.collaborateur.attribut.bouton.parti")}
                                     </button>
                                   </div>
                                 </div>

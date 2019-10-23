@@ -21,13 +21,13 @@ import { Auth } from 'aws-amplify'
 
 import Login from '../auth/Login'
 import { confirmAlert } from 'react-confirm-alert'
-import { Progress } from 'semantic-ui-react';
 
 class AssistantPartageEditeur extends Component {
     
     constructor(props) {
         super(props)
         this.state = { 
+            version: this.props.version,
             propositionId: this.props.propositionId,
             sansentete: this.props.sansentete,
             user: null
@@ -136,7 +136,8 @@ class AssistantPartageEditeur extends Component {
                 shareeId: `${values.editeur.ayantDroit.rightHolderId}`,
                 rightHolderPct: `${values.ayantDroit.pourcent}`,
                 shareePct: `${values.editeur.pourcent}`,
-                proposalId: `${this.state.propositionId}`
+                proposalId: `${this.state.propositionId}`,
+                version: this.state.version
             }
 
             axios.post(`http://api.smartsplit.org:8080/v1/editorsplitshare`, body)
@@ -146,11 +147,12 @@ class AssistantPartageEditeur extends Component {
                     rightHolder: {nom: values.ayantDroit.nom, uuid: values.ayantDroit.rightHolderId},
                     shareeId: values.editeur.ayantDroit.rightHolderId,
                     proposalId: this.state.propositionId,
-                    mediaId: this.state.media.mediaId
+                    mediaId: this.state.media.mediaId,
+                    version: this.state.version
                 }
                 axios.post(`http://api.smartsplit.org:8080/v1/editorsplitshare/invite`, body)
                 .then(()=>{
-                    window.location.reload()
+                    this.props.soumettre()
                 })
             })
             .catch(err=>{
@@ -169,17 +171,7 @@ class AssistantPartageEditeur extends Component {
                         (t, i18n)=>
                             <div className="ui grid" style={{padding: "10px"}}>
                                 {!this.state.sansentete && 
-                                    <EntetePartage enregistrer={
-                                        (cb)=>{
-                                            //this.soumettre(this.state.assistant.props.values, cb)
-                                        }} media={this.state.media} user={this.state.user} />}
-                                {!this.state.sansentete && 
-                                <div className="ui row">                                    
-                                    <div className="ui sixteen wide column">
-                                        <Progress percent="10" size='tiny' indicating/>
-                                    </div>
-                                </div>
-                                }
+                                    <EntetePartage media={this.state.media} user={this.state.user} />}                                
                                 <div className="ui row">
                                     <div className="ui two wide column" />
                                     <div className="ui twelve wide column">

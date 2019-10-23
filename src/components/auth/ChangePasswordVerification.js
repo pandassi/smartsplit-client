@@ -1,13 +1,8 @@
 import React, { Component } from "react";
 import { Translation } from "react-i18next";
 import { Modal } from "semantic-ui-react";
-import Login from "./Login";
 
-function accueil() {
-  window.location.assign("./Login.js");
-}
-
-class ChangePasswordVerification extends Component {
+class ChoosePasswordVerification extends Component {
   render() {
     return (
       <React.Fragment>
@@ -18,15 +13,15 @@ class ChangePasswordVerification extends Component {
                 <div
                   style={{ FontFamily: "IBM Plex Sans", fontSize: "16px" }}
                 >
-                  <tr>
-                    <td>
+                  <div className="ui row">
+                    <div className="ui fourteen wide column">
                       <h2>
                         &nbsp;&nbsp;{t("flot.split.auth.passwordchanged.titre")}
                       </h2>
 
                       <p>{t("flot.split.auth.passwordchanged.indication")}</p>
-                    </td>
-                  </tr>
+                    </div>
+                  </div>
                 </div>
                 <div className="field">
                   <div className="control">
@@ -56,4 +51,4 @@ class ChangePasswordVerification extends Component {
   }
 }
 
-export default ChangePasswordVerification;
+export default ChoosePasswordVerification;
