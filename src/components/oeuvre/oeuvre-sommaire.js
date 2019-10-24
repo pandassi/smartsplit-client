@@ -220,7 +220,7 @@ export default class SommaireOeuvre extends Component {
                 <div className="tdb--cadre ui row accueil">
                     <ModaleConnexion fn={()=>{
                         this.getMedia()
-                        axios.get(`http://dev.api.smartsplit.org:8080/v1/proposal/media/${this.state.mediaId}`)
+                        axios.get(`http://api.smartsplit.org:8080/v1/proposal/media/${this.state.mediaId}`)
                         .then(res => {
                             let _p0
                             res.data.forEach(_p => {
