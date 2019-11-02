@@ -17,6 +17,9 @@ import * as roles from "../../assets/listes/role-uuids.json";
 import Colonne from "../page-assistant/colonne";
 import Entete from "../page-assistant/entete";
 import ChampTexte from "../page-assistant/champ-texte";
+import InfoBulle from '../partage/InfoBulle';
+
+import "../formulaires.css";
 
 import RightHolderOptions from "../page-assistant/right-holder-options";
 import {
@@ -43,7 +46,8 @@ export default class PageCreation extends Component {
       publishers: getRightHolderIdsByRole(
         roles.publisher,
         props.values.rightHolders
-      )
+      ),
+      x: 0, y: 0
     };
   }
 
@@ -101,6 +105,8 @@ export default class PageCreation extends Component {
   }
 
   render() {
+    const { x, y } = this.state;
+
     return (
       <Translation>
         {t => (
@@ -108,21 +114,28 @@ export default class PageCreation extends Component {
             <SauvegardeAutomatiqueMedia etat={true} values={this.props.values} interval={20000} />
             <Colonne>
               <Entete
+                className="sousTitre"
                 pochette={this.props.pochette}
                 icon={this.icon()}
                 label={t("flot.documenter.entete.creation")}
-                question={
-                  t("flot.split.documente-ton-oeuvre.documenter.titre1") +
-                  " " +
-                  this.props.values.title +
-                  "?"
-                }
+                question={t("flot.split.documente-ton-oeuvre.documenter.titre1",
+                  { titre: this.props.values.title })}
+                /*+
+                " " +
+                t('flot.split.partage.guillemets.guillemet1')
+                +
+                this.props.values.title
+                +
+                t('flot.split.partage.guillemets.guillemet2')
+                +
+                "?"*/
                 description={t(
                   "flot.split.documente-ton-oeuvre.documenter.titre1-description"
                 )}
               />
 
               <ChampDate
+                className="nouvelleDate"
                 label={t(
                   "flot.split.documente-ton-oeuvre.documenter.date-creation"
                 )}
@@ -134,65 +147,55 @@ export default class PageCreation extends Component {
                   this.props.setFieldValue("creationDate", value)
                 }
               />
-
+              <br />
+              {/*<div className="fields">
+                <div className="fourwide field">
+                  <label>{t("flot.split.documente-ton-oeuvre.documenter.auteur")}</label>
+                </div>
+                <div className="twelve wide field">
+                  <InfoBulle text={t("flot.split.documente-ton-oeuvre.documenter.auteur-description")} />
+                </div>
+              </div>*/}
               <ChampSelectionMultipleAyantDroit
+                label={t("flot.split.documente-ton-oeuvre.documenter.auteur")}
                 pochette={this.props.pochette}
                 items={this.rightHolderOptions()}
-                label={t("flot.split.documente-ton-oeuvre.documenter.auteur")}
-                createLabel={t(
-                  "flot.split.documente-ton-oeuvre.documenter.collabo"
-                )}
-                description={t(
-                  "flot.split.documente-ton-oeuvre.documenter.auteur-description"
-                )}
+                info={<InfoBulle text={t("flot.split.documente-ton-oeuvre.documenter.auteur-description")} />}
                 placeholder={t(
                   "flot.split.documente-ton-oeuvre.documenter.auteur-placeholder"
                 )}
                 value={this.state.songwriters}
                 onChange={ids => this.setState({ songwriters: ids })}
               />
-
+              <br />
               <ChampSelectionMultipleAyantDroit
+                label={t("flot.split.documente-ton-oeuvre.documenter.compositeur")}
                 pochette={this.props.pochette}
                 items={this.rightHolderOptions()}
-                label={t(
-                  "flot.split.documente-ton-oeuvre.documenter.compositeur"
-                )}
-                createLabel={t(
-                  "flot.split.documente-ton-oeuvre.documenter.collabo"
-                )}
-                description={t(
-                  "flot.split.documente-ton-oeuvre.documenter.compositeur-description"
-                )}
+                info={<InfoBulle text={t("flot.split.documente-ton-oeuvre.documenter.compositeur-description")} />}
                 placeholder={t(
                   "flot.split.documente-ton-oeuvre.documenter.compositeur-placeholder"
                 )}
                 value={this.state.composers}
                 onChange={ids => this.setState({ composers: ids })}
               />
-
+              <br />
               <ChampSelectionMultipleAyantDroit
+                label={t("flot.split.documente-ton-oeuvre.documenter.editeur")}
                 pochette={this.props.pochette}
                 items={this.rightHolderOptions()}
-                label={t("flot.split.documente-ton-oeuvre.documenter.editeur")}
-                createLabel={t(
-                  "flot.split.documente-ton-oeuvre.documenter.collabo"
-                )}
-                description={t(
-                  "flot.split.documente-ton-oeuvre.documenter.editeur-description"
-                )}
+                info={<InfoBulle text={t("flot.split.documente-ton-oeuvre.documenter.editeur-description")} />}
                 placeholder={t(
                   "flot.split.documente-ton-oeuvre.documenter.editeur-placeholder"
                 )}
                 value={this.state.publishers}
                 onChange={ids => this.setState({ publishers: ids })}
               />
-
+              <br />
               <ChampTexte
                 label={t("flot.split.documente-ton-oeuvre.documenter.codeiswc")}
-                description={t(
-                  "flot.split.documente-ton-oeuvre.documenter.codeiswc-description"
-                )}
+                className="codeiswc"
+                info={<InfoBulle text={t("flot.split.documente-ton-oeuvre.documenter.codeiswc-description")} />}
                 placeholder={t(
                   "flot.split.documente-ton-oeuvre.documenter.codeiswc-placeholder"
                 )}

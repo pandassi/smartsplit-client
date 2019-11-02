@@ -8,6 +8,7 @@ export default class LigneMedia extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      pochette: props.pochette,
       media: props.media,
       user: props.user
     };
@@ -35,6 +36,9 @@ export default class LigneMedia extends Component {
   }
 
   render() {
+
+    let pochette = this.state.pochette ? "pochette" : ""
+
     let elem = this.state.media;
     let _p = this.state.p0;
 
@@ -70,7 +74,11 @@ export default class LigneMedia extends Component {
                 <div
                   className="ui one wide column cliquable"
                   onClick={() => {
-                    window.location.href = `/oeuvre/sommaire/${elem.mediaId}`;
+                    if(!pochette) {
+                      window.location.href = `/oeuvre/sommaire/${elem.mediaId}`;
+                    } else {
+                      window.location.href = `/documenter/${elem.mediaId}`;
+                    }
                   }}
                 >
                   <i className="file image outline icon big grey"></i>
@@ -78,7 +86,11 @@ export default class LigneMedia extends Component {
                 <div
                   className="ui seven wide column cliquable"
                   onClick={() => {
-                    window.location.href = `/oeuvre/sommaire/${elem.mediaId}`;
+                    if(!pochette) {
+                      window.location.href = `/oeuvre/sommaire/${elem.mediaId}`;
+                    } else {
+                      window.location.href = `/documenter/${elem.mediaId}`;
+                    }
                   }}
                 >
                   <div className="song-name">{`${elem.title}`}</div>
@@ -89,12 +101,12 @@ export default class LigneMedia extends Component {
                     &nbsp;&nbsp;{t("flot.split.tableaudebord.pieces.par")}&nbsp;
                   </div>
                   <div
-                    className="small-500-color"
+                    className={`small-500-color ${pochette}`}
                     style={{ display: "inline-block" }}
                   >{`${elem.artist}`}</div>
                   <br />
                   <div
-                    className="small-400-color"
+                    className={`small-400-color`}
                     style={{ display: "inline-block" }}
                   >
                     {i18n.lng &&
@@ -105,9 +117,9 @@ export default class LigneMedia extends Component {
                   </div>
                 </div>
                 <div className="ui six wide column">
-                  {!continuerDisabled && (
+                  {!pochette && !continuerDisabled && (
                     <div
-                      className={`ui medium button`}
+                      className={`ui medium button ${pochette}`}
                       onClick={() => {
                         window.location.href = `/partager/existant/${_p.uuid}`;
                       }}
@@ -117,9 +129,9 @@ export default class LigneMedia extends Component {
                       )}
                     </div>
                   )}
-                  {!nouveauDisabled && (
+                  {!pochette && !nouveauDisabled && (
                     <div
-                      className={`ui medium button`}
+                      className={`ui medium button ${pochette}`}
                       onClick={() => {
                         window.location.href = `/partager/nouveau/${this.state.media.mediaId}`;
                       }}
@@ -129,9 +141,9 @@ export default class LigneMedia extends Component {
                       )}
                     </div>
                   )}
-                  {!sommaireDisabled && (
+                  {!pochette && !sommaireDisabled && (
                     <div
-                      className={`ui medium button`}
+                      className={`ui medium button ${pochette}`}
                       onClick={() => {
                         window.location.href = `/partager/${this.state.media.mediaId}`;
                       }}
@@ -139,9 +151,9 @@ export default class LigneMedia extends Component {
                       {t("flot.split.sommaire.titre")}
                     </div>
                   )}
-                  {!votationDisabled && (
+                  {!pochette && !votationDisabled && (
                     <div
-                      className={`ui medium button`}
+                      className={`ui medium button ${pochette}`}
                       onClick={() => {
                         window.location.href = `/partager/${this.state.media.mediaId}`;
                       }}
@@ -149,7 +161,17 @@ export default class LigneMedia extends Component {
                       {t("flot.split.documente-ton-oeuvre.proposition.voter")}
                     </div>
                   )}
-                  {_p && <Label>{t(`flot.split.etat.${_p.etat}`)}</Label>}
+                  {pochette && (
+                    <div
+                      className={`ui medium button ${pochette}`}
+                      onClick={() => {
+                        window.location.href = `/documenter/${this.state.media.mediaId}`;
+                      }}
+                    >
+                      {t("flot.split.documente-ton-oeuvre.titre")}
+                    </div>
+                  )}
+                  {!pochette && _p && <Label>{t(`flot.split.etat.${_p.etat}`)}</Label>}
                 </div>
               </div>
             </div>
