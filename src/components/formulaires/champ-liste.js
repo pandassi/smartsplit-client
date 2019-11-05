@@ -102,12 +102,13 @@ export class ChampListeEntiteMusicaleAssistant extends Component {
             recherche: props.recherche,
             selection: props.selection,
             onInput: props.onInput,
-            ajout: true,
+            ajout: props.ajout,
             nomCommeCle: props.nomCommeCle
         }
         this.OPTIONS = undefined
         this.listeAyantsDroit = this.listeEntites.bind(this)
         this.onChange = props.onChange
+        this.surAjout = this.surAjout.bind(this)
     }
 
     componentWillMount() {
@@ -152,6 +153,10 @@ export class ChampListeEntiteMusicaleAssistant extends Component {
             })
     }
 
+    surAjout(e) {
+        this.props.surAjout(e, ()=>{this.listeEntites()})
+    }
+
     render() {
         return (
             <Translation>
@@ -175,7 +180,8 @@ export class ChampListeEntiteMusicaleAssistant extends Component {
                                             selection: false,
                                             multiple: false,
                                             options: this.state.options,
-                                            allowAdditions: false,
+                                            allowAdditions: this.state.ajout,
+                                            onAddItem: this.surAjout,
                                             clearable: false
                                         }} />
                                 )
