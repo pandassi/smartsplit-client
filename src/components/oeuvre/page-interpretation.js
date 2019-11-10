@@ -28,7 +28,7 @@ export default class PageInterpretation extends Component {
     );
   }
 
-  handleChange(newRightHolders) {
+  handleChange(newRightHolders) {    
     this.props.setFieldValue("rightHolders", newRightHolders);
   }
 
@@ -36,6 +36,20 @@ export default class PageInterpretation extends Component {
     return this.props.pochette ? starIconOrange : starIconGreen;
   }
 
+  idsSiUUID(ids) {
+    // Protéger la liste des valeurs non-uuid
+    let _ids = []
+    const UUID_REGEXP = new RegExp("[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}")
+    if(ids) {
+        ids.forEach(id=>{
+            if(UUID_REGEXP.test(id)) {
+                _ids.push(id)
+            }
+        })
+        return _ids        
+    }
+  }
+  
   render() {
     return (
       <Translation>
@@ -66,10 +80,8 @@ export default class PageInterpretation extends Component {
                   "flot.split.documente-ton-oeuvre.documenter.titre2-placeholder"
                 )}
                /*  onChange={newRightHolders => this.handleChange(newRightHolders)} */
-                onChange={ids => {
-                  let _ids = this.idsSiUUID(ids)
-                  this.handleChange(_ids)
-                  //this.setState({songwriters: _ids})
+                onChange={ids => {                  
+                  this.handleChange(ids)                  
                 }}
                 fn={(nouveau)=>{
                   this.props.parent.nouvelAyantDroit(this.props.values.rightHolders, this.props.setFieldValue, nouveau, roles.musician)
