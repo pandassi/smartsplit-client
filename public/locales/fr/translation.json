@@ -183,7 +183,8 @@
       },
       "valider": {
         "titre": "Valide ton Split",
-        "soustitre": "Invite tes collaborateurs à valider ce Split"
+        "soustitre": "Invite tes collaborateurs à valider ce Split",
+        "pourquoi": "Pourquoi refuses-tu le split (optionel) ?"
       },
       "accueil": {
         "connexion": "Connexion obligatoire",
@@ -586,6 +587,7 @@
         "composer": "Compositeur",
         "singer": "Chanteur",
         "musicien": "Musicien",
+        "musician": "Musicien",
         "remixer": "Arrangeur",
         "publisher": "Éditeur"
       },
