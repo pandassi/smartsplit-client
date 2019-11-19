@@ -7,6 +7,7 @@ import axios from 'axios'
 
 // Composantes
 import Beignet from '../visualisation/partage/beignet'
+import Beignet2 from '../visualisation/partage/beignet2'
 import Histogramme from '../visualisation/partage/histogramme'
 import ChampGradateurAssistant from '../formulaires/champ-gradateur'
 import { ChampTexteAssistant } from '../formulaires/champ-texte'
@@ -17,10 +18,8 @@ import { ChampListeCollaborateurAssistant } from "../formulaires/champ-liste"
 import BoutonsRadio from "../formulaires/champ-radio"
 
 import Lock from "./Lock"
-import { toast } from "react-toastify"
 
 const MODES = { egal: "0", role: "1", manuel: "2" }
-
 const COLORS = ["#BCBBF2", "#D9ACF7", "#EBB1DC", "#FFAFA8", "#FCB8C5", "#FAC0AE", "#FFD0A9", "#F8EBA3", "#C6D9AD", "#C6F3B6", "#93E9E4", "#91DDFE", "#A4B7F1"]
 
 const arrondir = function (nombre) {
@@ -202,7 +201,6 @@ class PageAssistantPartageAuteur extends Component {
     changementGradateur(index, delta) {
 
         // Changement d'un gradateur
-        const DELTA = delta
         let invariable = this.state.partsInvariables
         let droits = this.props.values.droitAuteur
 
@@ -328,9 +326,6 @@ class PageAssistantPartageAuteur extends Component {
     }
 
     render() {
-        function FormField(props) {
-            return <input style={props.style} />
-        }
 
         let visualisation
         if (this.state.parts.length > 0) {
@@ -354,18 +349,16 @@ class PageAssistantPartageAuteur extends Component {
                     break;
                 case MODES.role:
                     // 2 beignets, 1 pour les droits Musique, l'autre pour les droits Paroles   
-                    visualisation = (
-                        <div>
-                            {this.state.parts && (
-                                <Beignet className="twelve wide field" titre="Total" uuid="auteur--beignet--1"
-                                    data={this.state.parts} type="workCopyrightSplit" />)}
-                            {this.state.partsMusique && (
-                                <Beignet className="six wide field" titre="Musique" uuid="auteur--beignet--2"
-                                    data={this.state.partsMusique} type="workCopyrightSplit" />)}
-                            {this.state.partsParoles && (
-                                <Beignet className="six wide field" titre="Paroles" uuid="auteur--beignet--3"
-                                    data={this.state.partsParoles} type="workCopyrightSplit" />)}
-                        </div>
+                    visualisation = (       
+                    <div>
+                        {this.state.partsParoles && (
+                            <Beignet2 className="six wide field" titre="Paroles" uuid="auteur--beignet--3"
+                                data={this.state.partsParoles} type="workCopyrightSplit" side ="left"/>)}
+
+                        {this.state.partsMusique && (
+                            <Beignet2 className="six wide field" titre="Musique" uuid="auteur--beignet--2"
+                                data={this.state.partsMusique} type="workCopyrightSplit" side="right" />)}
+                    </div>
                     )
                     break;
                 default:
@@ -516,6 +509,7 @@ class PageAssistantPartageAuteur extends Component {
                                                                                                     className="holder-name">
                                                                                                     {part.nom}
                                                                                                     <i className="right flated close icon cliquable"
+                                                                                                        style={{ top: "0px", right: "10px", position: "absolute" }}
                                                                                                         onClick={() => {
                                                                                                             arrayHelpers.remove(index)
                                                                                                             this.setState({ ping: true }, () => {
@@ -624,7 +618,7 @@ class PageAssistantPartageAuteur extends Component {
                                                                 <div style={{ margin: "0 auto", height: "100px" }}>
                                                                     <div className="ui grid">
                                                                         <div className="ui row">
-                                                                            <div className="ui ten wide column">
+                                                                            <div className="ui sixteen wide column">
                                                                                 <ChampListeCollaborateurAssistant
                                                                                     onRef={ayantsDroit => this.setState({ ayantsDroit: ayantsDroit })}
                                                                                     style={{ height: "50px" }}

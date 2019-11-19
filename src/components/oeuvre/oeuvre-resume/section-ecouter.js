@@ -1,18 +1,46 @@
 import React from 'react';
-import deezerIcon from '../../../assets/svg/icons/deezer.svg';
-import appleIcon from '../../../assets/svg/icons/apple-green.svg';
-import youtubeIcon from '../../../assets/svg/icons/youtube-green.svg';
-import amazonIcon from '../../../assets/svg/icons/amazonmusic-green.svg';
-import googleIcon from '../../../assets/svg/icons/googleplaymusic-green.svg';
-import soundcloudIcon from '../../../assets/svg/icons/soundcloud-green.svg';
-import spotifyIcon from '../../../assets/svg/icons/spotify-green.svg';
-import TitreModifiable from "./titre-modifiable";
-import { Translation } from 'react-i18next';
+
+import TitreModifiable from "./titre-modifiable"
+import { Translation } from 'react-i18next'
+import deezerIconOrange from '../../../assets/svg/icons/deezer-orange.svg'
+import appleIconOrange from '../../../assets/svg/icons/apple-orange.svg'
+import youtubeIconOrange from '../../../assets/svg/icons/youtube-orange.svg'
+import amazonIconOrange from '../../../assets/svg/icons/amazonmusic-orange.svg'
+import googleIconOrange from '../../../assets/svg/icons/googleplaymusic-orange.svg'
+import soundcloudIconOrange from '../../../assets/svg/icons/soundcloud-orange.svg'
+import spotifyIconOrange from '../../../assets/svg/icons/spotify-orange.svg'
+import deezerIconVert from '../../../assets/svg/icons/deezer-green.svg'
+import appleIconVert from '../../../assets/svg/icons/apple-green.svg'
+import youtubeIconVert from '../../../assets/svg/icons/youtube-green.svg'
+import amazonIconVert from '../../../assets/svg/icons/amazonmusic-green.svg'
+import googleIconVert from '../../../assets/svg/icons/googleplaymusic-green.svg'
+import soundcloudIconVert from '../../../assets/svg/icons/soundcloud-green.svg'
+import spotifyIconVert from '../../../assets/svg/icons/spotify-green.svg'
+
+let deezerIcon, appleIcon, youtubeIcon, amazonIcon, googleIcon, soundcloudIcon, spotifyIcon
 
 export default class SectionEcouter extends React.Component {
 
     constructor(props) {
         super(props)
+
+        if(this.props.pochette) {
+            deezerIcon = deezerIconOrange
+            appleIcon = appleIconOrange
+            youtubeIcon = youtubeIconOrange
+            amazonIcon = amazonIconOrange
+            googleIcon = googleIconOrange
+            soundcloudIcon = soundcloudIconOrange
+            spotifyIcon = spotifyIconOrange
+        } else {
+            deezerIcon = deezerIconVert
+            appleIcon = appleIconVert
+            youtubeIcon = youtubeIconVert
+            amazonIcon = amazonIconVert
+            googleIcon = googleIconVert
+            soundcloudIcon = soundcloudIconVert
+            spotifyIcon = spotifyIconVert
+        }
         
         this.state={
             liens: this.props.media.streamingServiceLinks ? this.props.media.streamingServiceLinks.map(l=>{
@@ -88,7 +116,7 @@ export default class SectionEcouter extends React.Component {
 
     renderLink(link) {
         return (
-            <a key={`${link.label}-${link.url}`} target="_blank" href={ link.url }>
+            <a key={`${link.label}-${link.url}`} target="_blank" href={ link.url } rel="noopener noreferrer">
                 <img className={'listen-icon'} src={ link.icon } alt={ link.label }/>
             </a>
         );
@@ -101,7 +129,8 @@ export default class SectionEcouter extends React.Component {
                     (t, i18n) =>
                     <>
                         <TitreModifiable
-                            href={'#'}
+                            pageNo={7}
+                            mediaId={this.props.media.mediaId}
                         >
                             <h4 className={ 'corps-title-2' }>Écouter</h4>
                         </TitreModifiable>

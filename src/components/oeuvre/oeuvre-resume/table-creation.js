@@ -2,7 +2,6 @@ import React from "react";
 import TableGauche from "./table-gauche";
 import moment from "moment";
 import { Translation } from "react-i18next";
-import { type } from "os";
 
 export default class TableCreation extends React.Component {
 
@@ -104,7 +103,7 @@ export default class TableCreation extends React.Component {
       <Translation>
         {
           (t, i18n) =>
-            (<TableGauche title={"Création"} rows={this.rangees(t, i18n)} />)
+            (<TableGauche pageNo={ 1 } mediaId={ this.props.media.mediaId }title={"Création"} rows={this.rangees(t, i18n)} />)
         }
       </Translation>
     )

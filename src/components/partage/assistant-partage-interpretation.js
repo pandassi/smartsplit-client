@@ -305,13 +305,15 @@ class PageAssistantPartageInterpretation extends Component {
                                                                                             <div className="ui thirteen wide column">
                                                                                                 <div className="holder-name">
                                                                                                     {part.nom}
-                                                                                                    <i className="right floated close icon cliquable" onClick={() => {
-                                                                                                        arrayHelpers.remove(index)
-                                                                                                        this.setState({ ping: true }, () => {
-                                                                                                            this.recalculerPartage()
-                                                                                                        })
-                                                                                                    }
-                                                                                                    }></i>
+                                                                                                    <i className="right floated close icon cliquable"
+                                                                                                        style={{ top: "0px", right: "10px", position: "absolute" }}
+                                                                                                        onClick={() => {
+                                                                                                            arrayHelpers.remove(index)
+                                                                                                            this.setState({ ping: true }, () => {
+                                                                                                                this.recalculerPartage()
+                                                                                                            })
+                                                                                                        }
+                                                                                                        }></i>
                                                                                                     <div className="ui divider"></div>
                                                                                                 </div>
                                                                                                 <BoutonsRadio
@@ -381,7 +383,7 @@ class PageAssistantPartageInterpretation extends Component {
                                                                 <div style={{ margin: "0 auto", height: "100px" }}>
                                                                     <div className="ui grid">
                                                                         <div className="ui row">
-                                                                            <div className="ui ten wide column">
+                                                                            <div className="ui sixteen wide column">
                                                                                 <ChampListeCollaborateurAssistant
                                                                                     onRef={ayantsDroit => this.setState({ ayantsDroit: ayantsDroit })}
                                                                                     indication={t('flot.split.documente-ton-oeuvre.collaborateurs.ajout')}

@@ -3,9 +3,11 @@ import { Wizard } from 'semantic-ui-react-formik'
 import { Form } from 'semantic-ui-react'
 import axios from 'axios'
 import { toast } from 'react-toastify'
-import ModifyUser from '../auth/ModifyUser';
+import ModifyUser from '../auth/ModifyUser'
 import { Translation } from 'react-i18next'
-import ChampSelectionMultipleAyantDroit from '../page-assistant/champ-selection-multiple-ayant-droit'
+
+import plusCircleGreen from "../../assets/svg/icons/plus-circle-green.svg"
+import plusCircleOrange from "../../assets/svg/icons/plus-circle-orange.svg"
 
 function required(value) {
     const result = value ? undefined : "Une sélection dans cette liste est obligatoire"
@@ -308,6 +310,31 @@ export class ChampListeCollaborateurAssistant extends Component {
         this.setState({ firstName: value })
     }
 
+    triggerLabel(indication) {
+        return this.plusCircleLabel(indication)
+    }
+
+    additionLabelClasses() {
+        const pochetteClass = this.props.pochette ? " pochette" : "";
+        return "addition-label" + pochetteClass;
+    }
+
+    plusCircle() {
+        return this.props.pochette ? plusCircleOrange : plusCircleGreen;
+    }
+
+    plusCircleLabel(labelString) {
+        return (
+          <span className={this.additionLabelClasses()}>
+            <img alt="" src={this.plusCircle()} /> {labelString}
+          </span>
+        )
+    }
+
+    additionLabel(t) {
+        return this.plusCircleLabel(t("collaborateur.titre2"));
+    }
+
     render() {
 
         return (
@@ -340,6 +367,8 @@ export class ChampListeCollaborateurAssistant extends Component {
                                             onAddItem: this.handleAddition,
                                             allowAdditions: this.state.ajout,
                                             required: this.state.requis,
+                                            additionLabel: this.additionLabel(t),
+                                            trigger: this.triggerLabel(t("flot.split.documente-ton-oeuvre.bouton.ajout")),
                                             onSelect: (e) => {
                                                 let _nom = e.target.parentElement.getElementsByClassName("text")[0].innerText                                                
                                                 if (this.props.fnSelect && this.state.nomsConnus.includes(_nom)) {

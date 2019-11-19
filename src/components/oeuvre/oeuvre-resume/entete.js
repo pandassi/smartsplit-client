@@ -2,53 +2,100 @@ import React from "react";
 import placeholder from "../../../assets/images/placeholder.png";
 import "../../../assets/scss/oeuvre-resume/entete.scss";
 
-import plusIcon from "../../../assets/svg/icons/plus-white.svg";
 import editIcon from "../../../assets/svg/icons/edit.svg";
 import { Translation } from "react-i18next";
 import moment from "moment";
+import axios from "axios"
 
 export default class Entete extends React.Component {
   
   constructor(props){
     super(props)
-    // VDEG Correction à apporter si pas d'ayant droit avec l'id    
-    this.avatars = props.media.rightHolders.map(r=>{
-      if(props.rightHolders[r.id]) {
-        return `https://smartsplit-images.s3.us-east-2.amazonaws.com/${props.rightHolders[r.id].avatarImage}`
-      } else {
-        return `https://smartsplit-images.s3.us-east-2.amazonaws.com/image.jpg`
+    this.state = {
+      media: props.media
+    }
+    this.avatars = []
+    let _avatars = {}
+    this.state.media.rightHolders.forEach(r=>{
+      
+      if(!this.avatars[r.id]) {        
+        let nom, prenom, nomArtiste, avatar, uuid
+        if(props.rightHolders[r.id]) {        
+          uuid = props.rightHolders[r.id].rightHolderId   
+          nom = props.rightHolders[r.id].lastName
+          prenom = props.rightHolders[r.id].firstName
+          nomArtiste = props.rightHolders[r.id].artistName
+          avatar = `https://smartsplit-images.s3.us-east-2.amazonaws.com/${props.rightHolders[r.id].avatarImage}`
+        } else {
+          uuid = " "
+          nom = " "
+          prenom = " "
+          nomArtiste = " "
+          avatar = `https://smartsplit-images.s3.us-east-2.amazonaws.com/image.jpg`
+        }
+        _avatars[r.id] = {nom, prenom, nomArtiste, avatar, uuid}
       }
+     
     })
+
+    Object.keys(_avatars).forEach(a=>this.avatars.push(_avatars[a]))
   }  
 
   renderAvatars() {
+    console.log(this.props.media)
     const maxDisplayedAvatars = 5;
     const displayedAvatars = Math.min(maxDisplayedAvatars, this.avatars.length);
-    const undisplayedAvatars = this.avatars.length - displayedAvatars;
-    const moreLabel = undisplayedAvatars ? (
-      <div key={`more-tag-avatar`} className={"more-tag"}>+{undisplayedAvatars}</div>
-    ) : (
-      <></>
-    );
+    const undisplayedAvatars = this.avatars.length - displayedAvatars;   
 
-    return this.avatars
+    let _avatars = this.avatars
       .slice(0, maxDisplayedAvatars)
       .map((avatar, index) => {
         const zIndex = displayedAvatars + 2 - index;
         return (
           <div key={`avatar_${index}`} className={"avatar"} style={{ zIndex }}>
-            <img src={avatar} alt="avatar" />
+            <img src={avatar.avatar} alt={`${avatar.prenom} ${avatar.nom} ${avatar.nomArtiste ? `(${avatar.nomArtiste})` : ""}`} title={`${avatar.prenom} ${avatar.nom} ${avatar.nomArtiste ? `(${avatar.nomArtiste})` : ""}`} />
           </div>
         );
-      })
-      .concat([moreLabel])
-      .concat([
-        <div key="plus-bouton-avatar">
-          <div className={"plus-button"}>
-            <img alt="" src={plusIcon} />
+      })      
+
+      if(this.avatars.length >= maxDisplayedAvatars) {
+
+        let autres = ""
+        this.avatars.slice(maxDisplayedAvatars, this.avatars.length).forEach(e=>{
+          autres = autres + `${e.prenom} ${e.nom} ${e.nomArtiste ? `(${e.nomArtiste})` : ""}\n`
+        })
+
+        _avatars = _avatars.concat([
+          <div key={`more-tag-avatar`} className={"more-tag"}  title={autres} >+{undisplayedAvatars}
           </div>
-        </div>
-      ]);
+        ])
+      }
+
+      return _avatars
+
+  }
+
+  getMedia() {
+    axios.get(`http://api.smartsplit.org:8080/v1/media/${this.state.media.mediaId}`)
+    .then(res => {
+        let media = res.data.Item
+        this.setState({ media: media })
+    })
+  }
+
+  majTitre() {
+    let titre = document.getElementById('titre').value
+    axios.patch(`http://api.smartsplit.org:8080/v1/media/${this.state.media.mediaId}/title`, {
+        mediaId: this.state.media.mediaId,
+        title: titre
+    })
+    .then(() => {
+        this.getMedia()
+    })
+  }
+
+  editerTitre(edition) {
+      this.setState({ editerTitre: edition })
   }
 
   render() {
@@ -60,25 +107,75 @@ export default class Entete extends React.Component {
               <img
                 className={"song-image"}
                 src={placeholder}
-                alt={this.props.media.title}
+                alt={this.state.media.title}
               />
 
-              <div className={"song-info"}>
-                <h1 className={"h1-style"}>
-                  {this.props.media.title}
-                  {/* <div className={"edit-link"}>
+              <div className={"song-info"}>                
+
+                {
+                  this.state.editerTitre &&
+                  (
+                    <div className="ui input">
+                      <input
+                          size="50"
+                          id="titre"
+                          type="text"
+                          placeholder="Saisir un titre"
+                          defaultValue={this.state.media.title}
+                          onKeyPress={(e) => {
+                              if (e.key === "Enter") {
+                                  this.majTitre()
+                                  this.editerTitre(false)
+                              }
+                          }}
+                      ></input>
+                      <i
+                          onClick={() => {
+                              this.majTitre();
+                              this.editerTitre(false)
+                          }}
+                          className="save alternate icon grey big"
+                          style={{
+                              cursor: "pointer",
+                              paddingTop: "5px",
+                              paddingLeft: "5px"
+                          }}>
+                      </i>
+                    </div>
+                  )
+                }
+                {
+                  !this.state.editerTitre &&
+                  (
+                    <h1>{`${this.state.media.title}`}&nbsp;&nbsp;&nbsp;
+                      <img
+                        src={editIcon}
+                        alt="Éditer le titre"
+                        onClick={() => {
+                          this.editerTitre(true)
+                        }}
+                        className="pencil alternate icon grey"
+                        style={{ cursor: "pointer" }}>
+                      </img>
+                    </h1>
+                  )
+                }
+
+                {/* <h1 className={"h1-style"}>
+                  {this.state.media.title}
+                  <div className={"edit-link"} style={{display: "inline"}}>
                     <img
                       className={"edit-icon"}
                       src={editIcon}
                       alt={"Éditer"}
                     />
-                  </div> */}
-                </h1>
+                  </div>
+                </h1> */}
 
                 <div className={"artist-line"}>
                   <div className={"left"}>
                     <span className={"tag"}>{t("oeuvre.piece")}</span>
-                    {t("oeuvre.par")} <span>{this.props.media.artist}</span> {/* t("oeuvre.feat") */}{" "}
+                    {t("oeuvre.par")} <span>{this.state.media.artist}</span> {/* t("oeuvre.feat") */}{" "}
                     <span>{/* t("oeuvre.artistName") */}</span>
                   </div>
 
@@ -90,9 +187,9 @@ export default class Entete extends React.Component {
                 <div className={"header-divider"}></div>
 
                 <div className={"other-info"}>
-                  {t("oeuvre.creePar")} <span>{this.props.rightHolders[this.props.media.creator].artistName}</span> &middot; Mis
+                  {t("oeuvre.creePar")} <span>{this.props.rightHolders[this.state.media.creator].artistName}</span> &middot; Mis
                   à jour {i18n.lng &&
-                      moment(this.props.media.modificationDate ? this.props.media.modificationDate : this.props.media.creationDate)
+                      moment(this.state.media.modificationDate ? this.state.media.modificationDate : this.state.media.creationDate)
                         .locale(i18n.lng.substring(0, 2))
                         .fromNow()}
                 </div>

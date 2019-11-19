@@ -67,7 +67,7 @@ class Register extends Component {
   validateUsername(value) {
     if (!value) {
       return "Required";
-    } else if (!/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i.test(value)) {
+    } else if (!/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i.test(value)) {
       return "Invalid username";
     }
   }
@@ -479,7 +479,7 @@ class Register extends Component {
                                 <div style={{
                                   color: "red",
                                   position: "absolute",
-                                  top: "665px"
+                                  top: "690px"
                                 }}>
                                   {t("flot.split.inscription.email-invalide")}{" "}
                                 </div>

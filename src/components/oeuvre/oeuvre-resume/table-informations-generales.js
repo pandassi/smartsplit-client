@@ -6,6 +6,9 @@ export default class TableInformationsGenerales extends React.Component {
     
     constructor(props) {
         super(props)
+        this.state={
+            
+        }
     }
 
     rangees(t, i18n) {
@@ -56,6 +59,8 @@ export default class TableInformationsGenerales extends React.Component {
                 {
                     (t, i18n) =>
                         <TableDroite
+                            pageNo={ 5 }
+                            mediaId={ this.props.media.mediaId }
                             title={ 'Information générales' }
                             rows={ this.rangees(t, i18n) }
                         />                    

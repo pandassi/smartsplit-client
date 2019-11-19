@@ -136,14 +136,14 @@ class PageAssistantPartageEnregistrement extends Component {
             deltaParCollaborateurVariable = -(delta / nbModifications) // Calcul de la différence à répartir sur les autres collaborateurs
         }
 
-         // Détection des limites pour ne pas dépasser 0
-         droits.forEach((elem, idx) => {
+        // Détection des limites pour ne pas dépasser 0
+        droits.forEach((elem, idx) => {
             let _pred = arrondir(parseFloat(elem.pourcent) + parseFloat(deltaParCollaborateurVariable))
             //console.log(elem.pourcent, _pred, deltaParCollaborateurVariable)
-            if(!invariable[idx] && _pred <= 0) {
+            if (!invariable[idx] && _pred <= 0) {
 
-                let reste = parseFloat(droits[idx].pourcent) + _pred            
-            
+                let reste = parseFloat(droits[idx].pourcent) + _pred
+
                 // Mettre à zéro
                 invariable[idx] = true
                 droits[idx].pourcent = 0
@@ -232,7 +232,7 @@ class PageAssistantPartageEnregistrement extends Component {
                         nom: nom,
                         ayantDroit: ayantDroit,
                         pourcent: `${arrondir(100 / (this.props.values.droitEnregistrement.length + 1))}`,
-                        producteur: false,
+                        producteur: true,
                         realisateur: false,
                         graphiste: false,
                         studio: false,
@@ -243,7 +243,7 @@ class PageAssistantPartageEnregistrement extends Component {
                         nom: nom,
                         ayantDroit: ayantDroit,
                         pourcent: `${arrondir(100 / (this.props.values.droitEnregistrement.length + 1))}`,
-                        producteur: false,
+                        producteur: true,
                         realisateur: false,
                         graphiste: false,
                         studio: false,
@@ -260,7 +260,7 @@ class PageAssistantPartageEnregistrement extends Component {
                         pourcent: `${arrondir(
                             this.pourcentRestant() /
                             (this.props.values.droitEnregistrement.length + 1))}`,
-                        producteur: false,
+                        producteur: true,
                         realisateur: false,
                         graphiste: false,
                         studio: false,
@@ -273,7 +273,7 @@ class PageAssistantPartageEnregistrement extends Component {
                         pourcent: `${arrondir(
                             this.pourcentRestant() /
                             (this.props.values.droitEnregistrement.length + 1))}`,
-                        producteur: false,
+                        producteur: true,
                         realisateur: false,
                         graphiste: false,
                         studio: false,
@@ -409,46 +409,51 @@ class PageAssistantPartageEnregistrement extends Component {
                                                                                             <div className="ui thirteen wide column">
                                                                                                 <div className="holder-name">
                                                                                                     {part.nom}
-                                                                                                    <i className="right floated close icon" onClick={() => {
-                                                                                                        arrayHelpers.remove(index)
-                                                                                                        this.setState({ ping: true }, () => {
-                                                                                                            this.recalculerPartage()
-                                                                                                        })
-                                                                                                    }
-                                                                                                    }></i>
+                                                                                                    <i className="right floated close icon"
+                                                                                                        style={{ top: "0px", right: "10px", position: "absolute" }}
+                                                                                                        onClick={() => {
+                                                                                                            arrayHelpers.remove(index)
+                                                                                                            this.setState({ ping: true }, () => {
+                                                                                                                this.recalculerPartage()
+                                                                                                            })
+                                                                                                        }
+                                                                                                        }></i>
                                                                                                     <div className="ui divider"></div>
                                                                                                 </div>
                                                                                                 <div className="coches--role__droit">
                                                                                                     {
                                                                                                         roles.map((elem, idx) => {
-                                                                                                            return (
+                                                                                                            return (                                                                                                                
                                                                                                                 <Checkbox
                                                                                                                     key={`coche_role_droit_enregistrement_${index}_${idx}`}
+                                                                                                                    disabled={elem.id === "producteur"}
                                                                                                                     label={elem.nom}
                                                                                                                     checked={this.props.values.droitEnregistrement[index][elem.id]}
                                                                                                                     onClick={(e) => {
-                                                                                                                        if (e.currentTarget.className.includes("checked")) {
-                                                                                                                            this.props.setFieldValue(`droitEnregistrement[${index}][${elem.id}]`, false)
-                                                                                                                        } else {
-                                                                                                                            this.props.setFieldValue(`droitEnregistrement[${index}][${elem.id}]`, true)
-                                                                                                                        }
-                                                                                                                        setTimeout(() => {
-                                                                                                                            this.recalculerPartage()
-                                                                                                                        }, 0)
+                                                                                                                        if(elem.id !== "producteur") {
+                                                                                                                            if (e.currentTarget.className.includes("checked")) {
+                                                                                                                                this.props.setFieldValue(`droitEnregistrement[${index}][${elem.id}]`, false)
+                                                                                                                            } else {
+                                                                                                                                this.props.setFieldValue(`droitEnregistrement[${index}][${elem.id}]`, true)
+                                                                                                                            }
+                                                                                                                            setTimeout(() => {
+                                                                                                                                this.recalculerPartage()
+                                                                                                                            }, 0)
+                                                                                                                        }                                                                                                                        
                                                                                                                     }}
                                                                                                                 />
                                                                                                             )
                                                                                                         })
                                                                                                     }
                                                                                                 </div>
-                                                                                             
+
                                                                                                 {
                                                                                                     this.state.mode === MODES.manuel && !(this.props.values.droitEnregistrement.length <= 1) && (
                                                                                                         <span className="pourcentage-wrapper">
                                                                                                             <div className="ui grid">
                                                                                                                 <div className="ui row">
                                                                                                                     <div className="ui one wide column">
-                                                                                                                        <Lock actif={this.state.partsInvariables[index]} onClick={()=>this.basculerVariable(index)} />
+                                                                                                                        <Lock actif={this.state.partsInvariables[index]} onClick={() => this.basculerVariable(index)} />
                                                                                                                     </div>
                                                                                                                     <div className="ui ten wide column">
                                                                                                                         <ChampGradateurAssistant
@@ -470,12 +475,12 @@ class PageAssistantPartageEnregistrement extends Component {
                                                                                                                     </div>
 
                                                                                                                     <div className="ui four wide column">
-                                                                                                                        <ChampTexteAssistant                                                                                                                            
+                                                                                                                        <ChampTexteAssistant
                                                                                                                             id={`texte_${index}`}
                                                                                                                             changement={(id, valeur) => {
-                                                                                                                                if(!isNaN(parseFloat(valeur))){
+                                                                                                                                if (!isNaN(parseFloat(valeur))) {
                                                                                                                                     this.changementTexte(id, valeur)
-                                                                                                                                }                                                                                                                                
+                                                                                                                                }
                                                                                                                             }}
                                                                                                                             modele={`droitEnregistrement[${index}].pourcent`}
                                                                                                                             disabled={(
@@ -484,11 +489,11 @@ class PageAssistantPartageEnregistrement extends Component {
                                                                                                                                 (1 === this.props.values.droitEnregistrement.length - Object.keys(this.state.partsInvariables).length)}
                                                                                                                             valeur={`${this.props.values.droitEnregistrement[index].pourcent}`}
                                                                                                                             input={this.props.changement}
-                                                                                                                        />                                                                                                                        
+                                                                                                                        />
                                                                                                                     </div>
                                                                                                                     {
-                                                                                                                        document.getElementsByName("droitEnregistrement["+index+"].pourcent").forEach((e, idx)=>{                                                                                                                                
-                                                                                                                            if(e.type==="text") {
+                                                                                                                        document.getElementsByName("droitEnregistrement[" + index + "].pourcent").forEach((e, idx) => {
+                                                                                                                            if (e.type === "text") {
                                                                                                                                 e.style.backgroundColor = "#faf8f9"
                                                                                                                                 e.style.border = "none"
                                                                                                                                 e.style.paddingBottom = "12px"
@@ -497,7 +502,7 @@ class PageAssistantPartageEnregistrement extends Component {
                                                                                                                     }
                                                                                                                 </div>
                                                                                                             </div>
-                                                                                                        </span>                                                                                                      
+                                                                                                        </span>
                                                                                                     )
                                                                                                 }
                                                                                             </div>
@@ -512,7 +517,7 @@ class PageAssistantPartageEnregistrement extends Component {
                                                                 <div style={{ margin: "0 auto", height: "100px" }}>
                                                                     <div className="ui grid">
                                                                         <div className="ui row">
-                                                                            <div className="ui ten wide column">
+                                                                            <div className="ui sixteen wide column">
                                                                                 <ChampListeCollaborateurAssistant
                                                                                     onRef={ayantsDroit => this.setState({ ayantsDroit: ayantsDroit })}
                                                                                     indication={t('flot.split.documente-ton-oeuvre.collaborateurs.ajout')}
