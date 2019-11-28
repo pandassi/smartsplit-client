@@ -20,6 +20,10 @@ import { Modal, Button } from 'semantic-ui-react'
 import moment from 'moment'
 import SommairePartagesEditeur from './sommaire-partages-editeur'
 import ModaleConnexion from '../auth/Connexion'
+import ModalFin from '../oeuvre/modal-fin'
+import ModalPropositionEnCours from '../modales/modale-proposition-encours'
+
+import InfoBulle from '../partage/InfoBulle';
 
 const PANNEAU_EDITEUR = 1, PANNEAU_PROPOSITIONS = 0
 
@@ -36,7 +40,8 @@ export default class SommairePartages extends Component {
             panneau: PANNEAU_PROPOSITIONS,
             modaleConnexion: false,
             modaleNouvelle: false,
-            modaleCourriels: false
+            modaleCourriels: false,
+            editeur: true
         }
         this.initialisation = this.initialisation.bind(this)
         this.clic = this.clic.bind(this)
@@ -44,6 +49,8 @@ export default class SommairePartages extends Component {
         this.afficherPanneauPropositions = this.afficherPanneauPropositions.bind(this)
         this.openModal = this.openModal.bind(this)
         this.closeModal = this.closeModal.bind(this)
+        this.modalePropositionEnCours = this.modalePropositionEnCours.bind(this)
+        this.actionEditeur = this.actionEditeur.bind(this)
     }
 
     componentWillReceiveProps(nextProps) {
@@ -109,6 +116,13 @@ export default class SommairePartages extends Component {
     ajouterNouvelleOeuvre() {
         this.setState({ modaleNouvelle: true })
     }
+
+    modalePropositionEnCours(ouvrir = true) {
+        this.setState({modalePropositionEnCours: ouvrir})
+    }
+    actionEditeur() {
+        this.setState({ editeur: false }) // Déjà à false
+    } // affecte état, rafraîchi contenu
 
     render() {
         if (this.state.propositions && this.state.media) {
@@ -180,7 +194,7 @@ export default class SommairePartages extends Component {
                         envoiDisabled = false
                     }
                 }
-                if ( (_p.etat === 'BROUILLON' || _p.etat === 'PRET' ) && _p.initiator.id === this.state.user.username) {
+                if ((_p.etat === 'BROUILLON' || _p.etat === 'PRET') && _p.initiator.id === this.state.user.username) {
                     continuerDisabled = false
                 }
                 if (_p.etat === 'ACCEPTE') {
@@ -260,8 +274,7 @@ export default class SommairePartages extends Component {
                             t =>
                                 <>
                                     <p className="ui color blue"
-                                        style={{
-                                            width: "800px",
+                                        style={{                                            
                                             fontFamily: "IBM Plex Sans",
                                             fontWeight: "normal",
                                             fontSize: "16px"
@@ -289,7 +302,7 @@ export default class SommairePartages extends Component {
             return (
                 <Translation>
                     {
-                        t =>
+                        (t, i18n) =>
                             <div className="ui segment">
                                 <div className="ui grid" style={{ padding: "10px" }}>
                                     <div className="ui row">
@@ -316,7 +329,21 @@ export default class SommairePartages extends Component {
                                                 !nouveauDisabled && (
                                                     <div className={`ui medium button`} onClick={
                                                         () => {
-                                                            window.location.href = `/partager/nouveau/${this.state.mediaId}`
+
+                                                            // Détecter si la proposition est verrouillée
+                                                            if(!this.state.media.initiateurPropositionEnCours.trim() || this.state.media.initiateurPropositionEnCours === this.state.user.username) {
+                                                                // Verrouiller la proposition
+                                                                axios.put(`http://api.smartsplit.org:8080/v1/media/proposal/${this.state.media.mediaId}`,{rightHolderId: this.state.user.username})
+                                                                .then(res=>{
+                                                                    window.location.href = `/partager/nouveau/${this.state.media.mediaId}`;
+                                                                })
+                                                                .catch(err=>{
+                                                                    console.log(err)
+                                                                })
+                                                            } else {
+                                                                this.modalePropositionEnCours()                                                                
+                                                            }
+                                                            
                                                         }
                                                     }>
                                                         {t('flot.split.documente-ton-oeuvre.proposition.nouvelle')}
@@ -394,14 +421,40 @@ export default class SommairePartages extends Component {
 
                                     {
                                         partageEditeur && (
+
                                             <div className="ui row">
                                                 <div className="ui one wide column" />
-                                                <div className="ui twelve wide column   ">
+                                                <div className="ui twelve wide column">
                                                     <span style={this.state.panneau === PANNEAU_PROPOSITIONS ? { cursor: "pointer", borderBottom: "solid green" } : { cursor: "pointer" }} className={`small-500${this.state.panneau === PANNEAU_PROPOSITIONS ? '-color' : ''}`} onClick={() => { this.afficherPanneauPropositions() }}>{t('flot.split.documente-ton-oeuvre.tableaudebord.collabo')}</span>&nbsp;&nbsp;
-                                                    <span style={this.state.panneau === PANNEAU_EDITEUR ? { cursor: "pointer", borderBottom: "solid green" } : { cursor: "pointer" }} className={`small-500${this.state.panneau === PANNEAU_EDITEUR ? '-color' : ''}`} onClick={() => { this.afficherPanneauEditeur() }}>{t('flot.split.documente-ton-oeuvre.tableaudebord.edito')}</span>
+                                                    {/* Doit être adjacent à encapsules */}
+                                                    <InfoBulle
+                                                        style={{ textAlign: "center", fontWeight: "bold" }}
+                                                        declencheur={(<span style={this.state.panneau === PANNEAU_EDITEUR ? { cursor: "pointer", borderBottom: "solid green" } : { cursor: "pointer" }} className={`small-500${this.state.panneau === PANNEAU_EDITEUR ? '-color' : ''}`} onClick={() => { this.afficherPanneauEditeur() }}>{t('flot.split.documente-ton-oeuvre.tableaudebord.edito')}</span>)}
+                                                        decoration={
+                                                            <>
+                                                                <div className="header">{t("flot.split.documente-ton-oeuvre.tableaudebord.as-tu")} </div>
+                                                                <br />
+                                                                <div className="ui negative button"
+                                                                    onClick={(e) => { this.actionEditeur() }} // () = activation passer paramètre true ou false
+                                                                    style={{ border: "1px solid #DCDFE1" }}> {/* Chargé mais des fois faut l'importer à moins que composante déjà importée l'ait déjà chargée */}
+                                                                    Non
+                                                                </div>
+                                                                <div className="ui positive button" onClick={(e) => {
+                                                                    this.actionEditeur() // Ensuite ligne 116
+                                                                    this.afficherPanneauEditeur() // L'affiche de suite après
+                                                                }}>Oui</div>
+                                                                <br /> <br />
+                                                                <div className="content" style={{ color: "#2DA84F" }}>{t("flot.split.documente-ton-oeuvre.tableaudebord.later")}</div>
+                                                            </> // nul
+                                                        }
+                                                        ouvert={this.state.editeur} // fonction passée à var pour changer état (= "swich"). Ligne 117
+                                                    // Défini dans state puis dans setState de InfoBulle
+                                                    />
                                                 </div>
                                                 <div className="ui one wide column" />
                                             </div>
+
+
                                         )
                                     }
                                     {
@@ -433,6 +486,15 @@ export default class SommairePartages extends Component {
                                         )
                                     }
                                 </div>
+                                {
+                                    this.state.media.initiateurPropositionEnCours &&
+                                    rightHolders[this.state.media.initiateurPropositionEnCours] &&
+                                    <ModalPropositionEnCours 
+                                        open={this.state.modalePropositionEnCours} 
+                                        titre={this.state.media.title} 
+                                        initiateur={rightHolders[this.state.media.initiateurPropositionEnCours].name}
+                                        onClose={()=>{this.modalePropositionEnCours(false)}} />
+                                }
                                 <Modal
                                     open={this.state.modaleConnexion}
                                     closeOnEscape={false}
