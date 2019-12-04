@@ -330,3 +330,49 @@ export class LogOutSVG extends SVG {
     );
   }
 }
+
+export class AvatarInitialsSVG extends SVG {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect width="24" height="24" rx="12" fill="black" fill-opacity="0.1" />
+      </svg>
+    );
+  }
+}
+
+export class ChevronDownSVG extends SVG {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M6 9L12 15L18 9"
+          stroke="#8DA0B3"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    );
+  }
+}
