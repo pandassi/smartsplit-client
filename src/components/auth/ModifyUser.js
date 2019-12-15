@@ -12,7 +12,7 @@ import { Auth } from "aws-amplify";
 import InfoBulle from '../partage/InfoBulle';
 
 const AWS = require("aws-sdk");
-const REGION = 'us-east-2'
+const REGION = 'us-east-1'
 AWS.config.update({ region: REGION });
 
 const MAX_IMAGE_SIZE = 10000000;
