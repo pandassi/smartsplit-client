@@ -43,7 +43,7 @@ class Password extends Component {
     try {
       this.setState({ patience: true }, () => {
         let body = {"password": values.password}
-        axios.post('http://dev.api.smartsplit.org:8080/v1/auth/verifyPassword', body)
+        axios.post('http://api.smartsplit.org:8080/v1/auth/verifyPassword', body)
         .then((resp)=>{     
             if (resp.data === "Success"){
                 this.props.history.push("/accueil");
