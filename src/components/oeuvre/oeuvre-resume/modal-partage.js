@@ -40,7 +40,7 @@ export default class ModalePartage extends Component {
         courriel: this.state.courriel,
         contexte: contexte
       }      
-      Axios.post(`http://dev.api.smartsplit.org:8080/v1/media/shareMedia`, data)
+      Axios.post(`http://api.smartsplit.org:8080/v1/media/shareMedia`, data)
       .then(res=>{
         console.log(res)
         toast.success(t('flot.partage.reussi'))
@@ -91,9 +91,9 @@ export default class ModalePartage extends Component {
     }
 
     let url, contexte = "smartsplit.org"
-    let prefixe = "http://dev.smartsplit.org/"
+    let prefixe = "http://proto.smartsplit.org/"
     if(this.props.pochette) {
-      prefixe = "http://dev.pochette.info/"
+      prefixe = "http://proto.pochette.info/"
       contexte = "pochette.info"
     }
 
