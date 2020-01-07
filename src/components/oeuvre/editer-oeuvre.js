@@ -60,7 +60,7 @@ class EditerOeuvre extends Component {
     if (this.state.mediaId) {
       axios
         .get(
-          `http://dev.api.smartsplit.org:8080/v1/media/${this.state.mediaId}`
+          `http://api.smartsplit.org:8080/v1/media/${this.state.mediaId}`
         )
         .then(res => {
           if (res.data.Item) {
