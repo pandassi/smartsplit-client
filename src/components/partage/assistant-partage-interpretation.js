@@ -222,7 +222,7 @@ class PageAssistantPartageInterpretation extends Component {
                             <EntetePartage 
                                 values={this.props.values} 
                                 enregistrerEtQuitter={this.props.enregistrerEtQuitter} 
-                                media={this.props.media} 
+                                enregistrerEtAllerAuSommaire={this.props.enregistrerEtAllerAuSommaire}
                                 user={this.props.user} 
                                 media={this.state.media} 
                                 currentPage={2} />

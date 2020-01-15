@@ -26,9 +26,6 @@ import VotationPartTiers from "./components/partage/votation-part-tiers";
 import AssistantPartage from "./components/partage/assistant-partage";
 // Tableau de bord
 import TableauDeBord from "./components/tableaudebord/tableaudebord";
-import Beignet from "./components/visualisation/partage/beignet";
-import Histogramme from "./components/visualisation/partage/histogramme";
-import Troissplits from "./components/visualisation/partage/troissplits";
 // Composantes auth
 import Password from "./components/auth/Password";
 import Login from "./components/auth/Login";
@@ -118,6 +115,7 @@ const renderRoutes = () => {
             <Route exact path="/proposition/sommaire/:uuid" component={SommaireProposition} />
             <Route exact path="/accueil" component={Accueil} />        
             <Route exact path="/partager/:mediaId" component={PartagesOeuvres} />
+            <Route exact path="/partager/:mediaId/envoyer" component={PartagesOeuvresEnvoyer} />
             <Route exact path="/partager/nouveau/:mediaId" component={NouveauPartage} />
             <Route exact path="/partager/existant/:uuid" component={ContinuerProposition} />
             <Route exact path="/partage-editeur/:propositionId" component={PartageEditeur} />
@@ -261,7 +259,16 @@ function PartagesOeuvres(match) {
     <Translation>
       {(t, i18n) => <SommairePartages i18n={i18n} mediaId={mediaId} />}
     </Translation>
-  );
+  )
+}
+
+function PartagesOeuvresEnvoyer(match) {
+  let mediaId = match.match.params.mediaId;
+  return (
+    <Translation>
+      {(t, i18n) => <SommairePartages i18n={i18n} mediaId={mediaId} envoyer={true} />}
+    </Translation>
+  )
 }
 
 function Accueil() {

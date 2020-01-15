@@ -1,4 +1,11 @@
 {
+  "media": {
+    "options": {
+      "reenvoyer": "Réenvoyer la proposition",
+      "sommaire": "Page publique",
+      "supprimer": "Supprimer"
+    }
+  },
   "info": {
     "oeuvre": {
       "creation": "Oeuvre # {{id}} créée. :)"
@@ -12,7 +19,7 @@
       "titre": "Cette oeuvre est ...",
       "originale": "Une création originale",
       "arrangement": "Une adaptation (remix)",
-      "reprise": "Une reprise (cover)"
+      "reprise": "Une interprétation (cover)"
     }
   },
   "titre": {
@@ -266,7 +273,7 @@
         "cest-parti": "C'est parti !"
       },
       "documente-ton-oeuvre": {
-        "titre": "Documenter",
+        "titre": "Ajouter des crédits",
         "preambule": "Bonjour ! Nous allons t'aider à documenter ton œuvre.",
         "chanteur": "Ajouter un type de chanteur",
         "instrument": "Ajouter un instrument",
@@ -520,9 +527,17 @@
           "donateur": "Créateur"
         },
         "proposition": {
+          "etat": {
+            "BROUILLON": "En rédaction",
+            "PRET": "Prêt à soumettre",
+            "VOTATION": "En attente de validation",
+            "ACCEPTE": "Acceptée",
+            "REFUSE": "Refusée"
+          },
+          "editer": "Éditer",
           "titre": "Envoyer le partage des droits",
           "sous-titre": "Pour finaliser ce partage, tu dois inviter tes collabos à valider le tout. Indique leurs adresses courriels auxquelles envoyer ta proposition de partage.",
-          "nouvelle": "Créer une nouvelle version",
+          "nouvelle": "Partager les droits",
           "envoyer": "Envoyer aux collaborateurs",
           "continuer": "Continuer le partage",
           "sommaire": "Accéder au sommaire",
@@ -572,13 +587,13 @@
         "bonjour": "Ici le panneau du tableau de bord Smartsplit.",
         "navigation": {
           "0": "Mes pièces musicales",
-          "1": "Mon profil public",
+          "1": "Mon profil",
           "2": "Mes collaborateurs"
         },
         "pieces": {
           "0": "Mes ajouts",
           "1": "Partagées avec moi",
-          "par": "par...",
+          "par": "par",
           "partageAvec": "partagé avec",
           "ajouter": "Ajouter"
         },

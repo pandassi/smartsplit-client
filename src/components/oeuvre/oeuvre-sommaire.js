@@ -19,6 +19,7 @@ export default class SommaireOeuvre extends Component {
         this.state = {
             mediaId: props.mediaId
         }
+        moment.defaultFormat = "DD-MM-YYYY HH:mm"
     }
 
     componentWillMount() {
@@ -72,7 +73,7 @@ export default class SommaireOeuvre extends Component {
         if (this.state.media) {
 
             let artiste = this.state.media.artist
-            let contenu = (<div className="ui nine wide column"></div>)
+            let contenu = (<div className="ui seven wide column"></div>)
 
             let imageSrc = placeholder
             if(this.state.media) {
@@ -94,7 +95,7 @@ export default class SommaireOeuvre extends Component {
                             <div className="ui grid">                                 
                                 <div className="ui row" style={{ background: "#FAF8F9" }}>
                                     <div className="ui one wide column"></div>
-                                    <div className="ui twelve wide column">
+                                    <div className="ui sixteen wide column">
                                         <Entete contenu={contenu} navigation={'/accueil'} profil={this.state.user} />                               
                                     </div>
                                 </div>
@@ -103,8 +104,8 @@ export default class SommaireOeuvre extends Component {
                                     <div className="ui eleven wide column">
                                         <div className="ui row">
                                             <div className="ui twelve wide column grid">
-                                                <div className="ui one wide column">
-                                                    <img style={{width: "64px", height: "64px"}} src={imageSrc} />                                                    
+                                                <div className="ui two wide column">
+                                                    <img alt="Vignette" style={{width: "64px", height: "64px"}} src={imageSrc} />                                                    
                                                 </div>
                                                 <div className="ui fourteen wide column">
                                                     <div className="ui row">
@@ -161,7 +162,7 @@ export default class SommaireOeuvre extends Component {
                                                         <div className="small-500-color"
                                                             style={{ display: "inline-block" }}>{`${artiste}`}&nbsp;</div>
                                                         <div className="small-400-color"
-                                                            style={{ display: "inline-block" }}>&bull; {i18n.lng && moment(this.state.media.creationDate).locale(i18n.lng.substring(0, 2)).fromNow()}</div>
+                                                            style={{ display: "inline-block" }}>&bull; {i18n.lng && moment(this.state.media.creationDate, moment.defaultFormat).locale(i18n.lng.substring(0, 2)).fromNow()}</div>
                                                     </div>
                                                 </div>
                                             </div>
