@@ -361,7 +361,7 @@ export default class SommairePartages extends Component {
                                                                     (  (this.state.media.initiateurPropositionEnCours && !this.state.media.initiateurPropositionEnCours.trim() ) || 
                                                                         this.state.media.initiateurPropositionEnCours === this.state.user.username)) {
                                                                     // Verrouiller la proposition
-                                                                    axios.put(`http://dev.api.smartsplit.org:8080/v1/media/proposal/${this.state.media.mediaId}`, { rightHolderId: this.state.user.username })
+                                                                    axios.put(`http://api.smartsplit.org:8080/v1/media/proposal/${this.state.media.mediaId}`, { rightHolderId: this.state.user.username })
                                                                         .then(res => {
                                                                             window.location.href = `/partager/nouveau/${this.state.media.mediaId}`;
                                                                         })

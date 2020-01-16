@@ -89,7 +89,7 @@ export default class ListePieces extends Component {
             .catch(err => console.log(err))
 
           axios
-            .get(`http://dev.api.smartsplit.org:8080/v1/media/liste-collaborations/${USER_ID}`)
+            .get(`http://api.smartsplit.org:8080/v1/media/liste-collaborations/${USER_ID}`)
             .then(res => {
               // Associe la liste des médias créés ou les médias pour lesquels une proposition est créée,
               // dans les deux cas, par l'usager.
