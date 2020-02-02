@@ -1,6 +1,6 @@
-import {config, Identite, journal} from '../../utils/application'
+import {config, Identite, journal, AyantsDroit} from '../../utils/application'
 import React, { Component } from "react"
-import { Wizard } from "semantic-ui-react-formik-iptoki"
+import { Wizard } from "../formulaires/assistant"
 import axios from "axios"
 import PageCreation from "./page-creation"
 import PageInterpretation from "./page-interpretation"
@@ -9,16 +9,16 @@ import PageParoles from "./page-paroles"
 import PageLiens from "./page-liens"
 import PageEnregistrement from "./page-enregistrement"
 import PageFichiers from "./page-fichiers"
-import { toast } from "react-toastify"
 import { withTranslation } from "react-i18next"
 import Navbar from "../navigation/navbar"
 import ModaleConnexion from "../auth/Connexion"
+import moment from 'moment'
 
 const NOM = "EditerOeuvre"
 
 class EditerOeuvre extends Component {
   constructor(props) {
-    super(props);    
+    super(props)
     this.state = {
       rightHolders: [],
       endModalOpen: false,
@@ -31,19 +31,19 @@ class EditerOeuvre extends Component {
   componentWillMount() {
     if (this.state.jeton) {
       axios
-        .post(`${config.API_URL}media/decodeMedia`, {
-          jeton: this.state.jeton
-        })
-        .then(res => {
-          if (
-            this.state.mediaId &&
-            parseInt(this.state.mediaId) === res.data.mediaId &&
-            res.data.acces === 3
-          ) {
-            this.chargement(true)
-          }
-        })
-        .catch(err => journal.erreur(NOM,err))
+      .post(`${config.API_URL}media/decodeMedia`, {
+        jeton: this.state.jeton
+      })
+      .then(res => {
+        if (
+          this.state.mediaId &&
+          parseInt(this.state.mediaId) === res.data.mediaId &&
+          res.data.acces === 3
+        ) {
+          this.chargement(true)
+        }
+      })
+      .catch(err => journal.erreur(NOM,err))
     } else {
       // Teste si l'usager est le créateur de l'oeuvre (dans le système)
       axios.get(`${config.API_URL}media/${this.state.mediaId}`)
@@ -56,22 +56,22 @@ class EditerOeuvre extends Component {
   getMedia(admin, response = false) {  
     if (this.state.mediaId) {
       axios
-        .get(
-          `${config.API_URL}media/${this.state.mediaId}`
-        )
-        .then(res => {
-          if (res.data.Item) {
-            let media = res.data.Item;
-            if (admin || response.username === media.creator) {
-              this.setState({ media: media }, () =>
-                this.fetchApiRightHolders()
-              );
-              this.setState({ user: response });
-            } else {
-              window.location.href = `/oeuvre/${media.mediaId}/resume`;
-            }
+      .get(
+        `${config.API_URL}media/${this.state.mediaId}`
+      )
+      .then(res => {
+        if (res.data.Item) {
+          let media = res.data.Item;
+          if (admin || response.username === media.creator) {
+            this.setState({ media: media }, () =>
+              this.fetchApiRightHolders()
+            );
+            this.setState({ user: response });
+          } else {
+            window.location.href = `/oeuvre/${media.mediaId}/resume`;
           }
-        });
+        }
+      })
     } else {
       this.setState({ user: response });
       this.fetchApiRightHolders();
@@ -95,22 +95,15 @@ class EditerOeuvre extends Component {
   }
 
   fetchApiRightHolders() {
-    axios
-      .get(`${config.API_URL}rightHolders`)
-      .then(response => {
-        // Ordonnancement simple uuid -> nom d'artiste
-        let assocUuidArtiste = {};
-        response.data.forEach(e => {
-          assocUuidArtiste[e.rightHolderId] =
-            e.artistName || `${e.firstName} ${e.lastName}`;
-        });
-        this.setState({ assocUuidArtiste: assocUuidArtiste }, () =>
-          this.setState({ rightHolders: response.data })
-        );
-      })
-      .catch(error => {
-        toast.error(error.message);
-      });
+    let response = AyantsDroit.ayantsDroitBrut
+    let assocUuidArtiste = {}    
+    response.forEach(e => {
+      assocUuidArtiste[e.rightHolderId] =
+        e.artistName || `${e.firstName} ${e.lastName}`
+    })
+    this.setState({ assocUuidArtiste: assocUuidArtiste }, () =>
+      this.setState({ rightHolders: response })
+    )    
   }
 
   componentWillReceiveProps(nextProps) {
@@ -222,8 +215,8 @@ class EditerOeuvre extends Component {
         pressArticleLinks: _m.pressArticleLinks || [],
         playlistLinks: _m.playlistLinks || [],
         creationDate: _m.creationDate
-          ? new Date(parseInt(_m.creationDate))
-          : new Date(),
+          ? moment(new Date(parseInt(_m.creationDate))).format('DD-MM-YYYY')
+          : moment(new Date()).format('DD-MM-YYYY'),
         publishDate: _m.publishDate ? _m.publishDate : "",
         publisher: _m.publisher ? _m.publisher.trim() : "",
         studio: _m.studio ? _m.studio.trim() : "",
@@ -268,18 +261,9 @@ class EditerOeuvre extends Component {
       .catch(error => {
         journal.error(error);
       });
-  };
-
-  boutonsCouleurPochette() {
-    let boutons = document.getElementsByClassName(
-      "ui right floated button pochette"
-    );
-    for (var i = 0; i < boutons.length; i++) {
-      boutons[i].style.backgroundColor = "#F2724A";
-    }
   }
 
-  renduPage(i18n) {
+  renduPage() {
     let page;
     switch (this.props.pageNo) {
       case "1":
@@ -287,7 +271,6 @@ class EditerOeuvre extends Component {
           <Wizard.Page>
             <PageCreation
               pochette={this.props.pochette}
-              i18n={i18n}
               rightHolders={this.state.rightHolders}
               assocUuidArtiste={this.state.assocUuidArtiste}
               parent={this}
@@ -300,7 +283,6 @@ class EditerOeuvre extends Component {
           <Wizard.Page>
             <PageInterpretation
               pochette={this.props.pochette}
-              i18n={i18n}
               rightHolders={this.state.rightHolders}
               assocUuidArtiste={this.state.assocUuidArtiste}
               parent={this}
@@ -313,7 +295,6 @@ class EditerOeuvre extends Component {
           <Wizard.Page>
             <PageEnregistrement
               pochette={this.props.pochette}
-              i18n={i18n}
               rightHolders={this.state.rightHolders}
               assocUuidArtiste={this.state.assocUuidArtiste}
               parent={this}
@@ -326,7 +307,6 @@ class EditerOeuvre extends Component {
           <Wizard.Page>
             <PageFichiers
               pochette={this.props.pochette}
-              i18n={i18n}
               rightHolders={this.state.rightHolders}
               assocUuidArtiste={this.state.assocUuidArtiste}
               parent={this}
@@ -339,7 +319,6 @@ class EditerOeuvre extends Component {
           <Wizard.Page>
             <PageInformationsGenerales
               pochette={this.props.pochette}
-              i18n={i18n}
             />
           </Wizard.Page>
         );
@@ -347,7 +326,7 @@ class EditerOeuvre extends Component {
       case "6":
         page = (
           <Wizard.Page>
-            <PageParoles i18n={i18n} pochette={this.props.pochette} />
+            <PageParoles pochette={this.props.pochette} />
           </Wizard.Page>
         );
         break;
@@ -365,7 +344,7 @@ class EditerOeuvre extends Component {
   }
 
   render() {
-    const t = this.props.t, i18n = this.props.i18n
+    const t = this.props.t
     if ((this.state.user || this.state.jeton) && this.state.media) {
       return (        
         <>
@@ -379,24 +358,44 @@ class EditerOeuvre extends Component {
           {this.state.rightHolders && this.props.pageNo && (
             <>
               <Wizard
+                pochette={this.props.pochette}
+                ButtonsWrapper={props => (
+                  <div
+                    style={{
+                      position: "fixed",
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      paddingTop: "15px",
+                      background: "#fff",
+                      boxShadow: "0 0 5px rgba(0,0,0,0.5)",
+                      pochette: this.props.pochette
+                    }}
+                  >
+                    <div className="ui grid">
+                      <div className="ui row">
+                        <div className="ui nine wide column">
+                          {props.children}
+                          {this.props.pochette}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}                  
                 initialValues={this.getInitialValues()}
                 onPageChanged={this.onPageChanged}
                 onSubmit={this.onSubmit}
                 buttonLabels={{
                   previous: t("navigation.precedent"),
                   next: t("navigation.suivant"),
-                  submit: t("navigation.envoi")
+                  submit: t("navigation.enregistrer")
                 }}
                 debug={false}
               >
-                {this.renduPage(i18n)}
+                {this.renduPage()}
               </Wizard>
             </>
-          )}
-          {this.props.pochette &&
-            document.getElementsByClassName("ui right floated button")
-              .length > 0 &&
-            this.boutonsCouleurPochette()}
+          )}         
         </>          
       )
     } else {

@@ -6,7 +6,7 @@ import 'react-confirm-alert/src/react-confirm-alert.css'
 import LogIn from '../auth/Login'
 import { Modal } from 'semantic-ui-react'
 import Declaration from '../auth/Declaration'
-import {Droits, Identite, AyantsDroit, config, journal, utils} from '../../utils/application'
+import { Droits, Identite, AyantsDroit, config, journal, utils } from '../../utils/application'
 import SommaireDroit from './sommaire-droit'
 
 import "../../assets/scss/tableaudebord/tableaudebord.scss";
@@ -29,15 +29,8 @@ class SommairePartage extends Component {
     }
 
     componentWillMount() {
-
-        this.setState({ ayantsDroit: AyantsDroit.ayantsDroit })
-        this.rafraichirDonnees(() => {
-            if ((this.estVoteFinal() && this.estVoteClos()) || this.state.rafraichirAuto) {
-                this.setState({ rafraichir: true }, () => {
-                    this.rafraichissementAutomatique()
-                })
-            }
-        })
+        this.setState({ ayantsDroit: AyantsDroit.ayantsDroit })    
+        this.rafraichirDonnees()
     }
 
     componentWillReceiveProps(nextProps) {
@@ -98,12 +91,10 @@ class SommairePartage extends Component {
             _mesVotes[type] = {}
         }
         _mesVotes[type].vote = choix
-
         if (choix === 'accept') {
             // Enlève la raison de refus si acceptation
             delete _mesVotes[type].raison
         }
-
         this.setState({ mesVotes: _mesVotes },
             () => {
                 // Vérifie si tous les votes sont saisis
@@ -200,7 +191,7 @@ class SommairePartage extends Component {
     //Identité ayant-droit. L'utilisateur connecté en cours
     transmettre() {
         const t = this.props.t
-        if(Identite.usager) {
+        if (Identite.usager) {
             if (Identite.usager.username === this.state.ayantDroit.rightHolderId) {
                 this.envoi()
             } else {
@@ -208,7 +199,7 @@ class SommairePartage extends Component {
             }
         } else {
             this.modaleConnexion()
-        }        
+        }
     }
 
     modaleConnexion(ouvert = true) {
@@ -221,50 +212,73 @@ class SommairePartage extends Component {
         let TYPE_SPLIT = Droits.listeDroits()
 
         if (this.state.proposition && this.state.ayantsDroit) {
-            TYPE_SPLIT.forEach(type => {
-                let _aDonnees = false
-                Object.keys(this.state.proposition.rightsSplits[type]).forEach(_cle => {
-                    if (this.state.proposition.rightsSplits[type][_cle].length > 0) { _aDonnees = true }
-                })
-
-                if (_aDonnees) {
-                    droits.push(<SommaireDroit
-                        ayantsDroit={this.state.ayantsDroit}
-                        type={type}
-                        key={`sommaire_${this.state.uuid}_${type}`}                        
-                        parts={this.state.proposition.rightsSplits[type]}
-                        titre={type}
-                        ayantDroit={this.state.ayantDroit}
-                        monVote={this.state.mesVotes[type]}
-                        voteTermine={
-                            this.estVoteFinal() ||
-                            this.estVoteClos() ||
-                            this.state.proposition.etat !== "VOTATION" ||
-                            (this.state.proposition.etat === "VOTATION" && !this.state.jetonApi)}
-                        parent={this}
-                        uuid={this.state.proposition.uuid}
-                        t={this.props.t}
-                    />)
-                }
+            TYPE_SPLIT.forEach((type, idx) => {                                
+                droits.push(<SommaireDroit
+                    proposition={this.state.proposition}
+                    ayantsDroit={this.state.ayantsDroit}
+                    votation={this.props.votation}
+                    type={type}
+                    key={`sommaire_${this.state.uuid}_${type}_${idx}`}                        
+                    parts={this.state.proposition.rightsSplits[type]}
+                    titre={type}
+                    ayantDroit={this.state.ayantDroit}
+                    monVote={this.state.mesVotes[type]}
+                    voteTermine={
+                        this.estVoteFinal() ||
+                        this.estVoteClos() ||
+                        this.state.proposition.etat !== "VOTATION" ||
+                        (this.state.proposition.etat === "VOTATION" && !this.state.jetonApi)}
+                    parent={this}
+                    uuid={this.state.proposition.uuid}
+                    t={this.props.t}
+                />)
             })
         }
 
         let t = this.props.t
+        let nbVotesCumules = 0, nbVotesTotal = Object.keys(this.state.mesVotes).length
+        Object.keys(this.state.mesVotes).forEach(part=>{
+            if(this.state.mesVotes[part].vote !== 'active') {
+                nbVotesCumules++
+            }
+        })
 
-        return (          
+        return (
             <div>
                 {
                     !this.state.patience && (
-
+                        
                         <div>
                             {droits}
                             {
                                 !this.estVoteClos() &&
                                 (this.state.proposition && this.state.proposition.etat === "VOTATION") &&
                                 (
-                                    <div className={`ui medium button ${!this.state.transmission ? 'disabled' : ''}`} disabled={!this.state.transmission} onClick={() => {
-                                        this.transmettre()
-                                    }}>{t('flot.split.documente-ton-oeuvre.bouton.voter')}
+                                    <div
+                                        style={{
+                                        position: "fixed",
+                                        bottom: 0,
+                                        left: 0,
+                                        right: 0,
+                                        paddingTop: "15px",
+                                        background: "#fff",
+                                        boxShadow: "0 0 5px rgba(0,0,0,0.5)",
+                                        pochette: this.props.pochette
+                                        }}
+                                    >
+                                        <div className="ui grid">
+                                            <div className="ui row" style={{marginBottom: "1rem"}}>
+                                                <div className="ui four wide column" style={{textAlign: "right", paddingRight: "4.5rem"}}>
+                                                    <span style={{color: "#687A8B", fontFamily: "IBM Plex Sans", fontStyle: "normal", "fontWeight": "normal", fontSize: "16px", lineHeight: "24px"}}>{t('navigation.vote.requis',{nb: nbVotesCumules, total: nbVotesTotal, nombre: nbVotesTotal > 1 ? 's' : ''})}</span>
+                                                </div>
+                                                <div className="ui ten wide column">
+                                                    <div className={`ui medium button voter ${!this.state.transmission ? 'disabled' : ''}`} disabled={!this.state.transmission} onClick={() => {
+                                                        this.transmettre()
+                                                    }}>{t('flot.split.documente-ton-oeuvre.bouton.voter')}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 )
                             }
@@ -291,12 +305,12 @@ class SommairePartage extends Component {
                     <LogIn
                         vote={true}
                         fn={() => {
-                            if(Identite.usager) {
+                            if (Identite.usager) {
                                 if (Identite.usager.username === this.state.ayantDroit.rightHolderId) {
-                                    this.setState({ user: Identite.usager }, ()=>{
+                                    this.setState({ user: Identite.usager }, () => {
                                         this.envoi()
                                         this.modaleConnexion(false)
-                                    })                                    
+                                    })
                                 } else {
                                     toast.error(t('flot.split.erreur.volIdentite'))
                                 }
@@ -320,12 +334,12 @@ class SommairePartage extends Component {
                                 jeton: this.state.jetonApi
                             }
                             axios.post(`${config.API_URL}proposal/voter`, body)
-                            .then((res) => {
-                                utils.naviguerVersSommairePartage(this.state.proposition.mediaId)
-                            })
-                            .catch((err) => {
-                                journal.error(err)
-                            })
+                                .then((res) => {
+                                    utils.naviguerVersSommairePartage(this.state.proposition.mediaId)
+                                })
+                                .catch((err) => {
+                                    journal.error(err)
+                                })
                         }} />
                 }
             </div>
