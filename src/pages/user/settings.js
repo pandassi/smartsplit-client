@@ -1,7 +1,7 @@
 import React from "react"
 import { useHistory } from "react-router"
 import { useSelector, useDispatch } from "react-redux"
-import { Column, Hairline } from "../../layout"
+import { Column, Hairline, Section } from "../../layout"
 import { Text } from "../../text"
 import { Form, useForm } from "../../forms"
 import MyProfile from "../../smartsplit/forms/my-profile"
@@ -12,6 +12,7 @@ import MyAccount from "../../smartsplit/forms/my-account"
 import SubScreenLayout from "../../layout/subscreen"
 import UserAvatar from "../../smartsplit/user/avatar"
 import Button from "../../widgets/button"
+import { MultiSectionLayout } from "../../layout/multi-section"
 
 const ProfileMenu = [
 	{
@@ -95,17 +96,27 @@ export function SettingsPageFull() {
 				<Button tertiary text="Sauvegarder" onClick={() => form.submit()} />
 			}
 		>
-			<Column of="section">
-				<MyProfile />
-				<Hairline />
-				<MyAccount />
-				<Hairline />
-				<MyProIdentity />
-				<Hairline />
-				<MyNotifications />
-				<Hairline />
-				<MySecurity />
-			</Column>
+			<MultiSectionLayout>
+				<Section>
+					<MyProfile />
+					<Hairline />
+				</Section>
+				<Section>
+					<MyAccount />
+					<Hairline />
+				</Section>
+				<Section>
+					<MyProIdentity />
+					<Hairline />
+				</Section>
+				<Section>
+					<MyNotifications />
+					<Hairline />
+				</Section>
+				<Section>
+					<MySecurity/>
+				</Section>
+			</MultiSectionLayout>
 		</SubScreenLayout>
 	)
 }
