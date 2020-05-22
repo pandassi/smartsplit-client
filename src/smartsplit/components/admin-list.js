@@ -1,8 +1,5 @@
 import React, { useState } from "react"
-import {
-	CollapsableItem,
-	CollapsableList,
-} from "../../widgets/collapsable-list"
+import List, { ListItem, CollapsableList } from "../../widgets/list"
 import { forEachChildren, Row } from "../../layout"
 import ChevronDown from "../../svg/chevron-down"
 import ChevronRight from "../../svg/chevron-right"
@@ -13,7 +10,12 @@ import { Colors } from "../../theme"
 import { TouchableWithoutFeedback, View } from "react-native"
 import { Platform } from "../../platform"
 import Hourglass from "../../svg/hourglass"
-import { AdminListMenu, DefaultMenu, PendingMenu } from "./admin-list-menus"
+import {
+	AdminListMenu,
+	DefaultMenu,
+	PendingMenu,
+	SimpleMenu,
+} from "./admin-list-menus"
 
 export const AdminListStyle = StyleSheet.create({
 	frame_pending: {
@@ -21,25 +23,25 @@ export const AdminListStyle = StyleSheet.create({
 	},
 })
 
-function getTitle(children) {
-	let title
-	if (typeof children === "object") {
-		title = []
+function formatContent(children) {
+	let content
+	if (typeof children === "object" && children !== null) {
+		content = []
 		if (Array.isArray(children)) {
-			title = children.map((element, index) =>
+			content = children.map((element, index) =>
 				React.cloneElement(element, { key: index })
 			)
 		} else {
 			forEachChildren(children, (child, index) =>
-				title.push(React.cloneElement(child, { key: index }))
+				content.push(React.cloneElement(child, { key: index }))
 			)
 		}
 	} else if (typeof children === "string") {
-		title = <Text>{children}</Text>
+		content = <Text>{children}</Text>
 	} else {
-		title = children
+		content = children
 	}
-	return title
+	return content
 }
 
 export function AdminListItem(props) {
@@ -54,38 +56,38 @@ export function AdminListItem(props) {
 		focus,
 		hideBullet,
 		list,
+		contextualMenu,
 		...nextProps
 	} = props
-	const content = getTitle(nextProps.content)
+	const content = formatContent(nextProps.content)
 
 	function renderMenu() {
-		return (
-			<>
-				{children && (
-					<AdminListMenu disabled={!focus}>{children}</AdminListMenu>
-				)}
-				{!children &&
-					(pending ? (
-						<PendingMenu
-							disabled={!focus}
-							onAccept={onAccept}
-							onRefuse={onRefuse}
-							onModify={onModify}
-						/>
-					) : (
-						<DefaultMenu
-							disabled={!focus}
-							onAdd={onAdd}
-							onDelete={onDelete}
-							onModify={onModify}
-						/>
-					))}
-			</>
-		)
+		const menuProps = {
+			disabled: !focus,
+			onAdd: onAdd,
+			onDelete: onDelete,
+			onModify: onModify,
+		}
+		let menu = <DefaultMenu {...menuProps} />
+		if (contextualMenu === "simple") {
+			menu = <SimpleMenu {...menuProps} />
+		} else if (pending) {
+			menu = <PendingMenu {...menuProps} />
+		} else if (typeof contextualMenu === "object" && !!contextualMenu) {
+			let menuChildren = []
+			forEachChildren(contextualMenu, (child, index) =>
+				menuChildren.push(
+					React.cloneElement(child, { key: index, disabled: !focus })
+				)
+			)
+			menu = <AdminListMenu disabled={!focus}>{menuChildren}</AdminListMenu>
+		}
+
+		return menu
 	}
 
 	return (
-		<CollapsableItem
+		<ListItem
 			list={list}
 			{...nextProps}
 			style={pending ? AdminListStyle.frame_pending : null}
@@ -105,13 +107,13 @@ export function AdminListItem(props) {
 					{!list && renderMenu()}
 				</>
 			)}
-		</CollapsableItem>
+		</ListItem>
 	)
 }
 
 export function AdminList(props) {
-	const { children, ...nextProps } = props
-	const title = getTitle(nextProps.title)
+	const { children, collapsable, ...nextProps } = props
+	const title = formatContent(nextProps.title)
 	const [currentFocus, setCurrentFocus] = useState(null)
 	let newChildren = []
 	forEachChildren(children, (child, index) => {
@@ -142,15 +144,17 @@ export function AdminList(props) {
 	}
 
 	function renderTitle() {
-		return (
+		return title ? (
 			<Row align="spread">
 				{title}
 				<DefaultMenu disabled={currentFocus !== -1} />
 			</Row>
+		) : (
+			title
 		)
 	}
 
-	return (
+	return collapsable ? (
 		<CollapsableList
 			title={renderTitle()}
 			onExpand={(value) => handleExpand(value)}
@@ -165,5 +169,7 @@ export function AdminList(props) {
 		>
 			{newChildren}
 		</CollapsableList>
+	) : (
+		<List title={renderTitle()}>{newChildren}</List>
 	)
 }

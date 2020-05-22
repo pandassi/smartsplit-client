@@ -84,7 +84,7 @@ export function TabBar(props) {
 	})
 
 	return (
-		<Column style={props.style}>
+		<Column style={props.style} of="component">
 			<Row style={props.barStyle}>
 				{children}
 				<View

@@ -111,8 +111,6 @@ export const ChangePasswordForm = connect(
 				error={errorPasswordRepeat}
 			/>
 
-			{errorMessage && <Text error>{errorMessage}</Text>}
-
 			<Platform web={Row} native={Column}>
 				{Platform.web && <Flex />}
 				<Button
